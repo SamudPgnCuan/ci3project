@@ -14,9 +14,14 @@ class User extends CI_Controller {
     }
 
     public function index() {
-        $data['users'] = $this->User_model->get_all();
-        $this->load->view('user_list', $data);
-    }
+    $data['users'] = $this->User_model->get_all();
+
+    // Memuat template AdminLTE
+    $this->load->view('template/header');
+    $this->load->view('user_list', $data);
+    $this->load->view('template/footer');
+}
+
 
     public function create() {
         $this->load->view('user_form', ['mode' => 'add']);
