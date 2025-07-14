@@ -15,45 +15,45 @@
         </div>
       </div>
 
-      <form id="destanaForm" method="post">
+      <form method="post" action="<?= site_url('destana/delete_bulk') ?>">
         <div class="card-body p-0">
           <table class="table table-bordered table-striped">
             <thead class="thead-dark">
               <tr>
                 <th class="text-center align-middle p-0" style="width: 50px;">
-                  <input type="checkbox" id="checkAll" style="transform: scale(1.2);" ></th>
-                <th>Nomor</th>
+                   <input type="checkbox" id="checkAll" style="transform: scale(1.2);">
+                </th>
+                <th>No</th>
                 <th>Kecamatan</th>
                 <th>Desa</th>
+                <th style="width: 80px;">Aksi</th>
               </tr>
             </thead>
             <tbody>
               <?php if (!empty($destana)): ?>
-                <?php foreach ($destana as $d): ?>
+                <?php $no = 1; foreach ($destana as $d): ?>
                   <tr>
-                    <td class="text-center align-middle p-0"><input type="checkbox" name="desa_ids[]" value="<?= $d->desa ?>" style="transform: scale(1.2);"></td>
-                    <td><?= $d->no ?></td>
+                    <td class="text-center align-middle p-0">
+                      <input type="checkbox" name="desa_ids[]" value="<?= $d->no ?>" style="transform: scale(1.2);">
+                    </td>
+                    <td><?= $no++ ?></td>
                     <td><?= $d->kecamatan ?></td>
                     <td><?= $d->desa ?></td>
+                    <td class="text-center">
+                      <a href="<?= site_url('destana/edit/' . $d->no) ?>" class="btn btn-warning btn-sm">Edit</a>
+                    </td>
                   </tr>
                 <?php endforeach; ?>
               <?php else: ?>
-                <tr><td colspan="3" class="text-center">Tidak ada data.</td></tr>
+                <tr><td colspan="5" class="text-center">Tidak ada data.</td></tr>
               <?php endif; ?>
             </tbody>
           </table>
         </div>
 
         <div class="card-footer d-flex justify-content-between">
+          <button type="submit" class="btn btn-danger" onclick="return confirm('Hapus data yang dipilih?')">🗑 Hapus</button>
           <a href="<?= site_url('destana/create') ?>" class="btn btn-primary">Tambah Destana</a>
-          <?php if (!empty($destana)): ?>
-            <div>
-              <button type="button" id="editButton" class="btn btn-warning">Edit</button>
-              <button type="submit" formaction="<?= site_url('relawan/delete_bulk') ?>" class="btn btn-danger" onclick="return confirm('Hapus data yang dipilih?')">
-                <i class="fas fa-trash-alt"></i> Hapus (centang data terlebih dahulu)
-            </button>
-            </div>
-          <?php endif; ?>
         </div>
       </form>
     </div>
@@ -61,22 +61,9 @@
   </div>
 </section>
 
-<!-- Script: Validasi checkbox untuk Edit -->
 <script>
-  document.getElementById('editButton').addEventListener('click', function () {
-    const checked = document.querySelectorAll('input[name="desa_ids[]"]:checked');
-    if (checked.length === 0) {
-      alert('Silakan pilih satu data untuk diedit.');
-    } else if (checked.length > 1) {
-      alert('Hanya boleh memilih satu data untuk diedit.');
-    } else {
-      const no = checked[0].value;
-      window.location.href = '<?= site_url("destana/edit/") ?>' + no;
-    }
-  });
-
   document.getElementById('checkAll').addEventListener('change', function () {
-    const checkboxes = document.querySelectorAll('input[name="desa_ids[]"]');
+    const checkboxes = document.querySelectorAll('input[name="ids[]"]');
     checkboxes.forEach(cb => cb.checked = this.checked);
   });
 </script>

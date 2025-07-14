@@ -15,7 +15,7 @@
         </div>
       </div>
 
-      <form id="relawanForm" method="post">
+      <form id="relawanForm" method="post" action="<?= site_url('relawan/delete_bulk') ?>">
         <div class="card-body table-responsive p-0">
           <table class="table table-bordered table-striped">
             <thead class="thead-dark">

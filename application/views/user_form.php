@@ -19,6 +19,7 @@
 
       <form method="post" action="<?= site_url($mode === 'edit' ? 'user/update/' . $user->username : 'user/store') ?>">
         <div class="card-body">
+          <?= validation_errors('<div class="alert alert-danger">', '</div>'); ?>
 
           <div class="form-group">
             <label for="username">Username</label>
@@ -44,7 +45,6 @@
             <input type="text" class="form-control" name="role" id="role"
                    value="<?= isset($user) ? $user->role : '' ?>" required>
           </div>
-
         </div>
 
         <div class="card-footer">
@@ -53,6 +53,5 @@
         </div>
       </form>
     </div>
-
   </div>
 </section>

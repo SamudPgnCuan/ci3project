@@ -11,24 +11,29 @@ class User extends CI_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model('User_model');
+        $this->load->library('form_validation');
+        $this->load->helper(['url', 'form']);
     }
 
-    public function index() {
-        $data['users'] = $this->User_model->get_all();
-
-        // Memuat template AdminLTE
+    private function load_template($view, $data = [])
+    {
         $this->load->view('template/header');
         $this->load->view('template/sidebar');
-        $this->load->view('user_list', $data);
+        $this->load->view($view, $data);
         $this->load->view('template/footer');
+    }
+
+    public function index() 
+    {
+        $data['users'] = $this->User_model->get_all();
+        $this->load_template('user_form', $data);
     }
 
 
     public function create() {
-        $this->load->view('template/header');
-        $this->load->view('template/sidebar');
-        $this->load->view('user_form', ['mode' => 'add']);
-        $this->load->view('template/footer');
+        $data['user'] = null;
+        $data['mode'] = 'create';
+        $this->load_template('user_form', $data);
     }
 
     public function store() {
@@ -39,10 +44,8 @@ class User extends CI_Controller {
 
     public function edit($username) {
         $user = $this->User_model->get_by_username($username);
-        $this->load->view('template/header');
-        $this->load->view('template/sidebar');
-        $this->load->view('user_form', ['user' => $user, 'mode' => 'edit']);
-        $this->load->view('template/footer');
+        $data['mode'] = 'edit';
+        $this->load_template('user_form', $data);
     }
 
     public function update($username) {

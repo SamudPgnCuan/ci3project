@@ -1,4 +1,5 @@
 <?php
+defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * @property Destana_model $Destana_model //cuma biar gak merah di vscode hehe gak kebaca ci3 nya
@@ -11,31 +12,34 @@ class Destana extends CI_Controller
     {
         parent::__construct();
         $this->load->model('Destana_model');
-        $this->load->helper(['url', 'form']);
         $this->load->library('form_validation');
+        $this->load->helper(['url', 'form']);
+    }
+
+    private function load_template($view, $data = [])
+    {
+        $this->load->view('template/header');
+        $this->load->view('template/sidebar');
+        $this->load->view($view, $data);
+        $this->load->view('template/footer');
     }
 
     public function index()
-{
-    $data['destana'] = $this->Destana_model->get_all(); 
-    $this->load->view('template/header');
-    $this->load->view('template/sidebar');
-    $this->load->view('destana_list', $data);
-    $this->load->view('template/footer');
-}
+    {
+        $data['destana'] = $this->Destana_model->get_all();
+        $this->load_template('destana_list', $data);
+    }
 
 
     public function create()
     {
-        $this->load->view('destana_form');
+        $data['destana'] = null;
+        $this->load_template('destana_form', $data);
     }
 
     public function store()
     {
-        $data = [
-            'kecamatan' => $this->input->post('kecamatan'),
-            'desa' => $this->input->post('desa')
-        ];
+        $data = $this->input->post();
         $this->Destana_model->insert($data);
         redirect('destana');
     }
@@ -44,15 +48,8 @@ class Destana extends CI_Controller
     public function edit($no)
     {
         $destana = $this->Destana_model->get_by_id(['no' => $no]);
-        if (!$destana) {
-            show_404();
-        }
-
         $data['destana'] = $destana;
-        $this->load->view('template/header');
-        $this->load->view('template/sidebar');
-        $this->load->view('destana_form', $data); // gunakan form yang sama untuk create & edit
-        $this->load->view('template/footer');
+        $this->load_template('destana_form', $data);
     }
 
     public function update()
