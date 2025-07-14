@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @property Relawan_model $Relawan_model // biar gak merah di VSCode
+ * @property Relawan_model $Relawan_model
  * @property CI_Input $input
  * @property CI_Form_validation $form_validation
  */
@@ -15,15 +15,24 @@ class Relawan extends CI_Controller
         $this->load->library('form_validation');
     }
 
+    private function load_template($view, $data = [])
+    {
+        $this->load->view('template/header');
+        $this->load->view('template/sidebar');
+        $this->load->view($view, $data);
+        $this->load->view('template/footer');
+    }
+
     public function index()
     {
         $data['relawan'] = $this->Relawan_model->get_all();
-        $this->load->view('relawan_list', $data);
+        $this->load_template('relawan_list', $data);
     }
 
     public function create()
     {
-        $this->load->view('relawan_form');
+        $data['relawan'] = null;
+        $this->load_template('relawan_form', $data);
     }
 
     public function store()
@@ -39,7 +48,8 @@ class Relawan extends CI_Controller
         $this->form_validation->set_rules('no_hp', 'No HP', 'required');
 
         if ($this->form_validation->run() == FALSE) {
-            $this->load->view('relawan_form');
+            $data['relawan'] = (object) $this->input->post();
+            $this->load_template('relawan_form', $data);
         } else {
             $data = [
                 'nama' => $this->input->post('nama'),
@@ -58,7 +68,7 @@ class Relawan extends CI_Controller
     public function edit($nik)
     {
         $data['relawan'] = $this->Relawan_model->get_by_nik($nik);
-        $this->load->view('relawan_form', $data);
+        $this->load_template('relawan_form', $data);
     }
 
     public function update($nik)
@@ -74,9 +84,9 @@ class Relawan extends CI_Controller
         $this->form_validation->set_rules('no_hp', 'No HP', 'required');
 
         if ($this->form_validation->run() == FALSE) {
-            $data['relawan'] = (object) $this->input->post(); // agar input tetap tampil
-            $data['relawan']->nik = $nik;
-            $this->load->view('relawan_form', $data);
+            $data['relawan'] = (object) $this->input->post();
+            $data['relawan']->nik = $nik; // mempertahankan NIK lama
+            $this->load_template('relawan_form', $data);
         } else {
             $data = [
                 'nama' => $this->input->post('nama'),

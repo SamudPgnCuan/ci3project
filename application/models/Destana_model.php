@@ -13,9 +13,9 @@ class Destana_model extends CI_Model
         return $this->db->insert($this->table, $data);
     }
 
-    public function get_by_id($id)
+    public function get_by_id($where)
     {
-        return $this->db->get_where($this->table, $id)->row();
+        return $this->db->get_where($this->table, $where)->row();
     }
 
     public function update($where, $data)

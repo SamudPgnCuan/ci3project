@@ -1,41 +1,46 @@
-<!-- Main Sidebar Container -->
+<?php
+  $segment1 = $this->uri->segment(1); // ambil segmen pertama dari URL
+?>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
   <a href="<?= site_url() ?>" class="brand-link">
-    <span class="brand-text font-weight-light">CI3 AdminLTE</span>
+    <span class="brand-text font-weight-light">samudmin</span>
   </a>
 
   <div class="sidebar">
-    <!-- Sidebar Menu -->
     <nav class="mt-2">
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
+
         <li class="nav-item">
-          <a href="<?= site_url() ?>" class="nav-link">
+          <a href="<?= site_url() ?>" class="nav-link <?= $segment1 == '' ? 'active' : '' ?>">
             <i class="nav-icon fas fa-home"></i>
             <p>Beranda</p>
           </a>
         </li>
+
         <li class="nav-item">
-          <a href="<?= site_url('user') ?>" class="nav-link">
+          <a href="<?= site_url('user') ?>" class="nav-link <?= $segment1 == 'user' ? 'active' : '' ?>">
             <i class="nav-icon fas fa-user"></i>
-            <p>Tabel User</p>
+            <p>Data User</p>
           </a>
         </li>
+
         <li class="nav-item">
-          <a href="<?= site_url('relawan') ?>" class="nav-link">
+          <a href="<?= site_url('relawan') ?>" class="nav-link <?= $segment1 == 'relawan' ? 'active' : '' ?>">
             <i class="nav-icon fas fa-people-carry"></i>
-            <p>Tabel Relawan</p>
+            <p>Data Relawan</p>
           </a>
         </li>
+
         <li class="nav-item">
-          <a href="<?= site_url('destana') ?>" class="nav-link">
+          <a href="<?= site_url('destana') ?>" class="nav-link <?= $segment1 == 'destana' ? 'active' : '' ?>">
             <i class="nav-icon fas fa-map-marker-alt"></i>
-            <p>Tabel Destana</p>
+            <p>Data Destana</p>
           </a>
         </li>
+
       </ul>
     </nav>
   </div>
 </aside>
 
-<!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">

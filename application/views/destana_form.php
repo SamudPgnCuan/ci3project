@@ -1,5 +1,6 @@
 <h2>Tambah Data Destana</h2>
 <form action="<?= site_url('destana/store') ?>" method="post">
+
     <label for="kecamatan">Kecamatan</label><br>
     <input type="text" name="kecamatan" required><br><br>
 

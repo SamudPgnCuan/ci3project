@@ -14,17 +14,21 @@ class User extends CI_Controller {
     }
 
     public function index() {
-    $data['users'] = $this->User_model->get_all();
+        $data['users'] = $this->User_model->get_all();
 
-    // Memuat template AdminLTE
-    $this->load->view('template/header');
-    $this->load->view('user_list', $data);
-    $this->load->view('template/footer');
-}
+        // Memuat template AdminLTE
+        $this->load->view('template/header');
+        $this->load->view('template/sidebar');
+        $this->load->view('user_list', $data);
+        $this->load->view('template/footer');
+    }
 
 
     public function create() {
+        $this->load->view('template/header');
+        $this->load->view('template/sidebar');
         $this->load->view('user_form', ['mode' => 'add']);
+        $this->load->view('template/footer');
     }
 
     public function store() {
@@ -35,7 +39,10 @@ class User extends CI_Controller {
 
     public function edit($username) {
         $user = $this->User_model->get_by_username($username);
+        $this->load->view('template/header');
+        $this->load->view('template/sidebar');
         $this->load->view('user_form', ['user' => $user, 'mode' => 'edit']);
+        $this->load->view('template/footer');
     }
 
     public function update($username) {
@@ -48,4 +55,15 @@ class User extends CI_Controller {
         $this->User_model->delete($username);
         redirect('user');
     }
+
+    public function delete_bulk() {
+    $ids = $this->input->post('user_ids');
+    if (!empty($ids)) {
+        foreach ($ids as $username) {
+            $this->User_model->delete($username); 
+        }
+    }
+    redirect('user');
+}
+
 }
