@@ -26,13 +26,14 @@ class Destana extends CI_Controller
 
     public function index()
     {
+        $data['mode'] = 'list';
         $data['destana'] = $this->Destana_model->get_all();
         $this->load_template('destana_list', $data);
     }
 
-
     public function create()
     {
+        $data['mode'] = 'create';
         $data['destana'] = null;
         $this->load_template('destana_form', $data);
     }
@@ -40,26 +41,27 @@ class Destana extends CI_Controller
     public function store()
     {
         $data = $this->input->post();
+        $data['jenis_bencana'] = implode(', ', $this->input->post('jenis_bencana'));
         $this->Destana_model->insert($data);
         redirect('destana');
     }
 
-
     public function edit($no)
     {
-        $destana = $this->Destana_model->get_by_id(['no' => $no]);
+        $data['mode'] = 'edit';
+        $destana = $this->Destana_model->get_by_no(['no' => $no]);
+        if (!$destana) {
+        show_error("Data dengan ID $no tidak ditemukan", 404);
+        }
         $data['destana'] = $destana;
         $this->load_template('destana_form', $data);
     }
 
     public function update()
     {
-        $no = $this->input->post('no');
-        $data = [
-            'kecamatan' => $this->input->post('kecamatan'),
-            'desa' => $this->input->post('desa')
-        ];
-        $this->Destana_model->update(['no' => $no], $data);
+        $data = $this->input->post();
+        $data['jenis_bencana'] = implode(', ', $this->input->post('jenis_bencana'));
+        $this->Destana_model->update(['no' => $data['no']], $data);
         redirect('destana');
     }
 
@@ -71,7 +73,7 @@ class Destana extends CI_Controller
 
     public function delete_bulk()
     {
-        $selected = $this->input->post('desa_ids');
+        $selected = $this->input->post('nos');
         if ($selected) {
             foreach ($selected as $no) {
                 $this->Destana_model->delete(['no' => $no]);

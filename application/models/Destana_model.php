@@ -13,7 +13,7 @@ class Destana_model extends CI_Model
         return $this->db->insert($this->table, $data);
     }
 
-    public function get_by_id($where)
+    public function get_by_no($where)
     {
         return $this->db->get_where($this->table, $where)->row();
     }

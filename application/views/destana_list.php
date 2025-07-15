@@ -26,6 +26,8 @@
                 <th>No</th>
                 <th>Kecamatan</th>
                 <th>Desa</th>
+                <th>Koordinat</th>
+                <th>Jenis Bencana</th>
                 <th style="width: 80px;">Aksi</th>
               </tr>
             </thead>
@@ -34,11 +36,13 @@
                 <?php $no = 1; foreach ($destana as $d): ?>
                   <tr>
                     <td class="text-center align-middle p-0">
-                      <input type="checkbox" name="desa_ids[]" value="<?= $d->no ?>" style="transform: scale(1.2);">
+                      <input type="checkbox" name="nos[]" value="<?= $d->no ?>" style="transform: scale(1.2);">
                     </td>
                     <td><?= $no++ ?></td>
                     <td><?= $d->kecamatan ?></td>
                     <td><?= $d->desa ?></td>
+                    <td><?= $d->koordinat ?></td>
+                    <td><?= str_replace(',', '<br>', $d->jenis_bencana) ?></td>
                     <td class="text-center">
                       <a href="<?= site_url('destana/edit/' . $d->no) ?>" class="btn btn-warning btn-sm">Edit</a>
                     </td>
@@ -52,7 +56,9 @@
         </div>
 
         <div class="card-footer d-flex justify-content-between">
-          <button type="submit" class="btn btn-danger" onclick="return confirm('Hapus data yang dipilih?')">🗑 Hapus</button>
+          <button type="submit" class="btn btn-danger" onclick="return confirm('Hapus data yang dipilih?')">
+            <i class="fas fa-trash-alt"></i> Hapus (centang data terlebih dahulu)
+          </button>
           <a href="<?= site_url('destana/create') ?>" class="btn btn-primary">Tambah Destana</a>
         </div>
       </form>
@@ -62,8 +68,23 @@
 </section>
 
 <script>
-  document.getElementById('checkAll').addEventListener('change', function () {
-    const checkboxes = document.querySelectorAll('input[name="ids[]"]');
+  const checkAll = document.getElementById('checkAll');
+  const checkboxes = document.querySelectorAll('input[name="nos[]"]');
+
+  // pilih semua
+  checkAll.addEventListener('change', function () {
     checkboxes.forEach(cb => cb.checked = this.checked);
+  });
+
+  // salah satu uncheck
+  checkboxes.forEach(cb => {
+    cb.addEventListener('change', function () {
+      if (!this.checked) {
+        checkAll.checked = false;
+      } else {
+        const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+        checkAll.checked = allChecked;
+      }
+    });
   });
 </script>

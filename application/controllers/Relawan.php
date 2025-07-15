@@ -5,6 +5,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @property Relawan_model $Relawan_model
  * @property CI_Input $input
  */
+
 class Relawan extends CI_Controller
 {
     public function __construct()
@@ -25,14 +26,15 @@ class Relawan extends CI_Controller
 
     public function index()
     {
+        $data['mode'] = 'list';
         $data['relawan'] = $this->Relawan_model->get_all(); 
         $this->load_template('relawan_list', $data);
     }
 
     public function create()
     {
-        $data['relawan'] = null;
         $data['mode'] = 'create';
+        $data['relawan'] = null;
         $this->load_template('relawan_form', $data);
     }
 
@@ -44,8 +46,12 @@ class Relawan extends CI_Controller
 
     public function edit($nik)
     {
-        $data['relawan'] = $this->Relawan_model->get_by_nik($nik);
         $data['mode'] = 'edit';
+        $relawan = $this->Relawan_model->get_by_nik(['no' => $nik]);
+        if (!$relawan) {
+        show_error("Data dengan ID $nik tidak ditemukan", 404);
+        }
+        $data['relawan'] = $relawan;
         $this->load_template('relawan_form', $data);
     }
 

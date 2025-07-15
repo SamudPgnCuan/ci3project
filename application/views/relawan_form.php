@@ -1,7 +1,11 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 
-<?php if (!isset($mode)) $mode = 'create'; ?>
-<?php if (!isset($relawan)) {
+<?php
+if ($mode !== 'create' && $mode !== 'edit') {
+  show_error("Mode tidak valid: harus 'create' atau 'edit'", 500);
+}
+
+if (!isset($relawan)) {
   $relawan = (object) [
     'nama' => '',
     'nik' => '',
@@ -11,11 +15,32 @@
     'komunitas' => '',
     'no_hp' => ''
   ];
-} ?>
+}
+
+// Variabel dinamis tergantung mode
+switch ($mode) {
+  case 'edit':
+    $judul_halaman = 'Edit Relawan';
+    $judul_form = 'Form Edit Relawan';
+    $aksi = 'relawan/update/' . $relawan->nik;
+    $label_tombol = 'Update';
+    $readonly_nik = 'readonly';
+    break;
+
+  case 'create':
+  default:
+    $judul_halaman = 'Tambah Relawan';
+    $judul_form = 'Form Tambah Relawan';
+    $aksi = 'relawan/store';
+    $label_tombol = 'Simpan';
+    $readonly_nik = '';
+    break;
+}
+?>
 
 <section class="content-header">
   <div class="container-fluid">
-    <h1><?= $mode === 'edit' ? 'Edit Relawan' : 'Tambah Relawan' ?></h1>
+    <h1><?= $judul_halaman ?></h1>
   </div>
 </section>
 
@@ -24,64 +49,63 @@
 
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title"><?= $mode === 'edit' ? 'Form Edit Relawan' : 'Form Tambah Relawan' ?></h3>
+        <h3 class="card-title"><?= $judul_form ?></h3>
         <div class="card-tools">
           <a href="<?= site_url('relawan') ?>" class="btn btn-secondary btn-sm">← Kembali</a>
         </div>
       </div>
 
-      <form method="post" action="<?= site_url($mode === 'edit' ? 'relawan/update/' . $relawan->nik : 'relawan/store') ?>">
+      <form method="post" action="<?= site_url($aksi) ?>">
         <div class="card-body">
           <?= validation_errors('<div class="alert alert-danger">', '</div>'); ?>
 
           <div class="form-group">
             <label for="nama">Nama</label>
             <input type="text" class="form-control" name="nama" id="nama"
-                   value="<?= isset($relawan) ? $relawan->nama : '' ?>" required>
+                   value="<?= $relawan->nama ?>" required>
           </div>
 
           <div class="form-group">
             <label for="nik">NIK</label>
             <input type="text" class="form-control" name="nik" id="nik"
-                   value="<?= isset($relawan) ? $relawan->nik : '' ?>"
-                   <?= $mode === 'edit' ? 'readonly' : '' ?> required>
+                   value="<?= $relawan->nik ?>" <?= $readonly_nik ?> required>
           </div>
 
           <div class="form-group">
             <label for="alamat">Alamat</label>
-            <textarea class="form-control" name="alamat" id="alamat" required><?= isset($relawan) ? $relawan->alamat : '' ?></textarea>
+            <textarea class="form-control" name="alamat" id="alamat" required><?= $relawan->alamat ?></textarea>
           </div>
 
           <div class="form-group">
             <label for="jenis_kelamin">Jenis Kelamin</label>
             <select name="jenis_kelamin" class="form-control" id="jenis_kelamin" required>
               <option value="">-- Pilih Jenis Kelamin --</option>
-              <option value="Laki-laki" <?= (isset($relawan) && $relawan->jenis_kelamin === 'Laki-laki') ? 'selected' : '' ?>>Laki-laki</option>
-              <option value="Perempuan" <?= (isset($relawan) && $relawan->jenis_kelamin === 'Perempuan') ? 'selected' : '' ?>>Perempuan</option>
+              <option value="Laki-laki" <?= $relawan->jenis_kelamin === 'Laki-laki' ? 'selected' : '' ?>>Laki-laki</option>
+              <option value="Perempuan" <?= $relawan->jenis_kelamin === 'Perempuan' ? 'selected' : '' ?>>Perempuan</option>
             </select>
           </div>
 
           <div class="form-group">
             <label for="tanggal_lahir">Tanggal Lahir</label>
             <input type="date" class="form-control" name="tanggal_lahir" id="tanggal_lahir"
-                   value="<?= isset($relawan) ? $relawan->tanggal_lahir : '' ?>" required>
+                   value="<?= $relawan->tanggal_lahir ?>" required>
           </div>
 
           <div class="form-group">
             <label for="komunitas">Komunitas</label>
             <input type="text" class="form-control" name="komunitas" id="komunitas"
-                   value="<?= isset($relawan) ? $relawan->komunitas : '' ?>" required>
+                   value="<?= $relawan->komunitas ?>" required>
           </div>
 
           <div class="form-group">
             <label for="no_hp">No HP</label>
             <input type="text" class="form-control" name="no_hp" id="no_hp"
-                   value="<?= isset($relawan) ? $relawan->no_hp : '' ?>" required>
+                   value="<?= $relawan->no_hp ?>" required>
           </div>
         </div>
 
         <div class="card-footer">
-          <button type="submit" class="btn btn-success"><?= $mode === 'edit' ? 'Update' : 'Simpan' ?></button>
+          <button type="submit" class="btn btn-success"><?= $label_tombol ?></button>
           <a href="<?= site_url('relawan') ?>" class="btn btn-secondary">Batal</a>
         </div>
       </form>

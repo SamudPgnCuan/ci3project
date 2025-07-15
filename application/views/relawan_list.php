@@ -81,8 +81,23 @@
 </section>
 
 <script>
-  document.getElementById('checkAll').addEventListener('change', function () {
-    const checkboxes = document.querySelectorAll('input[name="niks[]"]');
+  const checkAll = document.getElementById('checkAll');
+  const checkboxes = document.querySelectorAll('input[name="nos[]"]');
+
+  // pilih semua
+  checkAll.addEventListener('change', function () {
     checkboxes.forEach(cb => cb.checked = this.checked);
+  });
+
+  // salah satu uncheck
+  checkboxes.forEach(cb => {
+    cb.addEventListener('change', function () {
+      if (!this.checked) {
+        checkAll.checked = false;
+      } else {
+        const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+        checkAll.checked = allChecked;
+      }
+    });
   });
 </script>
