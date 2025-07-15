@@ -1,85 +1,114 @@
-<h2><?= isset($relawan) ? 'Edit Relawan' : 'Tambah Relawan' ?></h2>
+<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 
-<!-- Tambahkan CSS untuk layout -->
-<style>
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
+<?php
+if ($mode !== 'create' && $mode !== 'edit') {
+  show_error("Mode tidak valid: harus 'create' atau 'edit'", 500);
+}
 
-    label {
-        display: block;
-        margin-bottom: 0.25rem;
-        font-weight: 500;
-    }
+if (!isset($relawan)) {
+  $relawan = (object) [
+    'nama' => '',
+    'nik' => '',
+    'alamat' => '',
+    'jenis_kelamin' => '',
+    'tanggal_lahir' => '',
+    'komunitas' => '',
+    'no_hp' => ''
+  ];
+}
 
-    .text-danger {
-        color: red;
-        font-size: 0.875rem;
-    }
-</style>
+// Variabel dinamis tergantung mode
+switch ($mode) {
+  case 'edit':
+    $judul_halaman = 'Edit Relawan';
+    $judul_form = 'Form Edit Relawan';
+    $aksi = 'relawan/update/' . $relawan->nik;
+    $label_tombol = 'Update';
+    $readonly_nik = 'readonly';
+    break;
 
-<form action="<?= isset($relawan) ? site_url('relawan/update/' . $relawan->nik) : site_url('relawan/store') ?>" method="post">
-    <div class="form-group">
-        <label for="nama">Nama</label>
-        <input type="text" name="nama" class="form-control"
-               value="<?= set_value('nama', $relawan->nama ?? '') ?>">
-        <?= form_error('nama', '<small class="text-danger">', '</small>'); ?>
-    </div>
+  case 'create':
+  default:
+    $judul_halaman = 'Tambah Relawan';
+    $judul_form = 'Form Tambah Relawan';
+    $aksi = 'relawan/store';
+    $label_tombol = 'Simpan';
+    $readonly_nik = '';
+    break;
+}
+?>
 
-    <div class="form-group">
-        <label for="nik">NIK</label>
-        <input type="text" name="nik" class="form-control"
-               value="<?= set_value('nik', $relawan->nik ?? '') ?>">
-        <?= form_error('nik', '<small class="text-danger">', '</small>'); ?>
-    </div>
+<section class="content-header">
+  <div class="container-fluid">
+    <h1><?= $judul_halaman ?></h1>
+  </div>
+</section>
 
-    <div class="form-group">
-        <label for="alamat">Alamat</label>
-        <textarea name="alamat" class="form-control"><?= set_value('alamat', $relawan->alamat ?? '') ?></textarea>
-        <?= form_error('alamat', '<small class="text-danger">', '</small>'); ?>
-    </div>
+<section class="content">
+  <div class="container-fluid">
 
-    <div class="form-group">
-        <label for="jenis_kelamin">Jenis Kelamin</label>
-        <select name="jenis_kelamin" class="form-control">
-            <option value="">-- Pilih --</option>
-            <option value="Laki-laki" <?= set_select('jenis_kelamin', 'Laki-laki', isset($relawan) && $relawan->jenis_kelamin == 'Laki-laki') ?>>Laki-laki</option>
-            <option value="Perempuan" <?= set_select('jenis_kelamin', 'Perempuan', isset($relawan) && $relawan->jenis_kelamin == 'Perempuan') ?>>Perempuan</option>
-        </select>
-        <?= form_error('jenis_kelamin', '<small class="text-danger">', '</small>'); ?>
-    </div>
-
-    <div class="form-group">
-        <label for="tanggal_lahir">Tanggal Lahir (format: YYYY-MM-DD)</label>
-        <input type="text" name="tanggal_lahir" class="form-control"
-               value="<?= set_value('tanggal_lahir', $relawan->tanggal_lahir ?? '') ?>" placeholder="contoh: 2000-12-31">
-        <?= form_error('tanggal_lahir', '<small class="text-danger">', '</small>'); ?>
-    </div>
-
-    <div class="form-group">
-        <label for="komunitas">Komunitas</label>
-        <input type="text" name="komunitas" class="form-control"
-               value="<?= set_value('komunitas', $relawan->komunitas ?? '') ?>">
-        <?= form_error('komunitas', '<small class="text-danger">', '</small>'); ?>
-    </div>
-
-    <div class="form-group">
-        <label for="no_hp">No HP</label>
-        <input type="text" name="no_hp" class="form-control"
-               value="<?= set_value('no_hp', $relawan->no_hp ?? '') ?>">
-        <?= form_error('no_hp', '<small class="text-danger">', '</small>'); ?>
-    </div>
-
-    <!-- Tampilkan semua error di bawah form -->
-    <?php if (validation_errors()): ?>
-        <div class="text-danger mb-3">
-            <strong>Periksa kembali form Anda:</strong>
-            <ul>
-                <?= validation_errors('<li>', '</li>') ?>
-            </ul>
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title"><?= $judul_form ?></h3>
+        <div class="card-tools">
+          <a href="<?= site_url('relawan') ?>" class="btn btn-secondary btn-sm">← Kembali</a>
         </div>
-    <?php endif; ?>
+      </div>
 
-    <button type="submit" class="btn btn-primary">Simpan</button>
-    <a href="<?= site_url('relawan') ?>" class="btn btn-secondary">Batal</a>
-</form>
+      <form method="post" action="<?= site_url($aksi) ?>">
+        <div class="card-body">
+          <?= validation_errors('<div class="alert alert-danger">', '</div>'); ?>
+
+          <div class="form-group">
+            <label for="nama">Nama</label>
+            <input type="text" class="form-control" name="nama" id="nama"
+                   value="<?= $relawan->nama ?>" required>
+          </div>
+
+          <div class="form-group">
+            <label for="nik">NIK</label>
+            <input type="text" class="form-control" name="nik" id="nik"
+                   value="<?= $relawan->nik ?>" <?= $readonly_nik ?> required>
+          </div>
+
+          <div class="form-group">
+            <label for="alamat">Alamat</label>
+            <textarea class="form-control" name="alamat" id="alamat" required><?= $relawan->alamat ?></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="jenis_kelamin">Jenis Kelamin</label>
+            <select name="jenis_kelamin" class="form-control" id="jenis_kelamin" required>
+              <option value="">-- Pilih Jenis Kelamin --</option>
+              <option value="Laki-laki" <?= $relawan->jenis_kelamin === 'Laki-laki' ? 'selected' : '' ?>>Laki-laki</option>
+              <option value="Perempuan" <?= $relawan->jenis_kelamin === 'Perempuan' ? 'selected' : '' ?>>Perempuan</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="tanggal_lahir">Tanggal Lahir</label>
+            <input type="date" class="form-control" name="tanggal_lahir" id="tanggal_lahir"
+                   value="<?= $relawan->tanggal_lahir ?>" required>
+          </div>
+
+          <div class="form-group">
+            <label for="komunitas">Komunitas</label>
+            <input type="text" class="form-control" name="komunitas" id="komunitas"
+                   value="<?= $relawan->komunitas ?>" required>
+          </div>
+
+          <div class="form-group">
+            <label for="no_hp">No HP</label>
+            <input type="text" class="form-control" name="no_hp" id="no_hp"
+                   value="<?= $relawan->no_hp ?>" required>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <button type="submit" class="btn btn-success"><?= $label_tombol ?></button>
+          <a href="<?= site_url('relawan') ?>" class="btn btn-secondary">Batal</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

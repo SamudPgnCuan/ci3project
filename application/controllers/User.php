@@ -2,29 +2,34 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * @property User_model $User_model //cuma biar gak merah di vscode hehe gak kebaca dinamisitas ci
+ * @property User_model $User_model
  * @property CI_Input $input
  */
-
 class User extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
         $this->load->model('User_model');
+        $this->load->library('form_validation');
+        $this->load->helper(['url', 'form']);
+    }
+
+    private function load_template($view, $data = []) {
+        $this->load->view('template/header');
+        $this->load->view('template/sidebar');
+        $this->load->view($view, $data);
+        $this->load->view('template/footer');
     }
 
     public function index() {
-    $data['users'] = $this->User_model->get_all();
-
-    // Memuat template AdminLTE
-    $this->load->view('template/header');
-    $this->load->view('user_list', $data);
-    $this->load->view('template/footer');
-}
-
+        $data['users'] = $this->User_model->get_all();
+        $this->load_template('user_list', $data);
+    }
 
     public function create() {
-        $this->load->view('user_form', ['mode' => 'add']);
+        $data['user'] = null;
+        $data['mode'] = 'create';
+        $this->load_template('user_form', $data);
     }
 
     public function store() {
@@ -34,8 +39,9 @@ class User extends CI_Controller {
     }
 
     public function edit($username) {
-        $user = $this->User_model->get_by_username($username);
-        $this->load->view('user_form', ['user' => $user, 'mode' => 'edit']);
+        $data['user'] = $this->User_model->get_by_username($username);
+        $data['mode'] = 'edit';
+        $this->load_template('user_form', $data);
     }
 
     public function update($username) {
@@ -46,6 +52,16 @@ class User extends CI_Controller {
 
     public function delete($username) {
         $this->User_model->delete($username);
+        redirect('user');
+    }
+
+    public function delete_bulk() {
+        $usernames = $this->input->post('usernames');
+        if (!empty($usernames)) {
+            foreach ($usernames as $username) {
+                $this->User_model->delete($username);
+            }
+        }
         redirect('user');
     }
 }

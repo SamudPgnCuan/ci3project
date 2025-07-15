@@ -1,6 +1,7 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <title>Dashboard | CI3 + AdminLTE</title>
@@ -13,7 +14,9 @@
   <!-- Optional theme enhancements -->
   <link rel="stylesheet" href="<?= base_url('assets/adminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css'); ?>">
 
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
+
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
 
@@ -24,5 +27,5 @@
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
     </ul>
-    <span class="navbar-text ml-2">CodeIgniter 3 + AdminLTE</span>
+    <span class="navbar-text ml-2">ini cara makenya gimana ya</span>
   </nav>
