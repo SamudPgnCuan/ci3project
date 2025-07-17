@@ -39,10 +39,15 @@ class User extends CI_Controller {
     }
 
     public function edit($username) {
-        $data['user'] = $this->User_model->get_by_username($username);
         $data['mode'] = 'edit';
+        $user = $this->User_model->get_by_username($username);
+        if (!$user) {
+            show_404(); 
+        }
+        $data['user'] = $user;
         $this->load_template('user_form', $data);
     }
+
 
     public function update($username) {
         $data = $this->input->post();

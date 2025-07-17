@@ -26,7 +26,9 @@
                 <th>No</th>
                 <th>Kecamatan</th>
                 <th>Desa</th>
-                <th>Koordinat</th>
+                <th>Tahun Pembentukan</th>
+                <th>Kelas</th>
+                <th>Sumber Dana</th>
                 <th>Jenis Bencana</th>
                 <th style="width: 80px;">Aksi</th>
               </tr>
@@ -36,20 +38,24 @@
                 <?php $no = 1; foreach ($destana as $d): ?>
                   <tr>
                     <td class="text-center align-middle p-0">
-                      <input type="checkbox" name="nos[]" value="<?= $d->no ?>" style="transform: scale(1.2);">
+                      <input type="checkbox" name="ids[]" value="<?= $d['id'] ?>" style="transform: scale(1.2);">
                     </td>
                     <td><?= $no++ ?></td>
-                    <td><?= $d->kecamatan ?></td>
-                    <td><?= $d->desa ?></td>
-                    <td><?= $d->koordinat ?></td>
-                    <td><?= str_replace(',', '<br>', $d->jenis_bencana) ?></td>
+                    <td><?= $d['nama_kecamatan'] ?></td>
+                    <td><?= $d['nama_desa'] ?></td>
+                    <td><?= $d['tahun_pembentukan'] ?></td>
+                    <td><?= $d['nama_kelas'] ?></td>
+                    <td><?= $d['nama_sumber_dana'] ?></td>
+                    <td>
+                      <?= !empty($d['ancaman']) ? implode('<br>', $d['ancaman']) : '-' ?>
+                    </td>
                     <td class="text-center">
-                      <a href="<?= site_url('destana/edit/' . $d->no) ?>" class="btn btn-warning btn-sm">Edit</a>
+                      <a href="<?= site_url('destana/edit/' . $d['id']) ?>" class="btn btn-warning btn-sm">Edit</a>
                     </td>
                   </tr>
                 <?php endforeach; ?>
               <?php else: ?>
-                <tr><td colspan="5" class="text-center">Tidak ada data.</td></tr>
+                <tr><td colspan="9" class="text-center">Tidak ada data.</td></tr>
               <?php endif; ?>
             </tbody>
           </table>
@@ -69,14 +75,12 @@
 
 <script>
   const checkAll = document.getElementById('checkAll');
-  const checkboxes = document.querySelectorAll('input[name="nos[]"]');
+  const checkboxes = document.querySelectorAll('input[name="ids[]"]');
 
-  // pilih semua
   checkAll.addEventListener('change', function () {
     checkboxes.forEach(cb => cb.checked = this.checked);
   });
 
-  // salah satu uncheck
   checkboxes.forEach(cb => {
     cb.addEventListener('change', function () {
       if (!this.checked) {

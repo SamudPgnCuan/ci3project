@@ -39,7 +39,11 @@
                     </td>
                     <td><?= $user->username ?></td>
                     <td><?= $user->nama ?></td>
-                    <td><?= $user->password ?></td>
+                    <td>
+                      <span class="masked-password" id="masked_<?= $user->username ?>">••••••••</span>
+                      <span class="real-password d-none" id="real_<?= $user->username ?>"><?= $user->password ?></span>
+                      <button type="button" class="btn btn-sm btn-outline-secondary" onclick="togglePassword('<?= $user->username ?>')">👁️</button>
+                    </td>
                     <td><?= $user->role ?></td>
                     <td class="text-center">
                       <a href="<?= site_url('user/edit/' . $user->username) ?>" class="btn btn-warning btn-sm">Edit</a>
@@ -78,4 +82,17 @@
       checkAll.checked = Array.from(checkboxes).every(cb => cb.checked);
     });
   });
+
+  function togglePassword(username) {
+    const masked = document.getElementById('masked_' + username);
+    const real = document.getElementById('real_' + username);
+
+    if (real.classList.contains('d-none')) {
+      real.classList.remove('d-none');
+      masked.classList.add('d-none');
+    } else {
+      real.classList.add('d-none');
+      masked.classList.remove('d-none');
+    }
+  }
 </script>

@@ -7,11 +7,12 @@ if ($mode !== 'create' && $mode !== 'edit') {
 
 if (!isset($destana)) {
   $destana = (object) [
-    'no' => '',
-    'kecamatan' => '',
-    'desa' => '',
-    'koordinat' => '',
-    'jenis_bencana' => ''
+    'id' => '',
+    'id_kecamatan' => '',
+    'id_desa' => '',
+    'id_kelas' => '',
+    'id_sumber_dana' => '',
+    'jenis_bencana' => [] 
   ];
 }
 
@@ -19,7 +20,7 @@ switch ($mode) {
   case 'edit':
     $judul_halaman = 'Edit Destana';
     $judul_form = 'Form Edit Destana';
-    $aksi = 'destana/update/' . $destana->no;
+    $aksi = 'destana/update';
     $label_tombol = 'Update';
     break;
 
@@ -55,45 +56,82 @@ switch ($mode) {
           <?= validation_errors('<div class="alert alert-danger">', '</div>'); ?>
 
           <?php if ($mode === 'edit'): ?>
-            <input type="hidden" name="no" value="<?= $destana->no ?>">
+            <input type="hidden" name="id" value="<?= $destana->id ?>">
           <?php endif; ?>
 
           <div class="form-group">
-            <label for="kecamatan">Kecamatan</label>
-            <input type="text" class="form-control" name="kecamatan" id="kecamatan"
-                   value="<?= $destana->kecamatan ?>" required>
-          </div>
-
-          <div class="form-group">
-            <label for="desa">Desa</label>
-            <input type="text" class="form-control" name="desa" id="desa"
-                   value="<?= $destana->desa ?>" required>
-          </div>
-
-          <div class="form-group">
-            <label for="koordinat">Koordinat</label>
-            <input type="text" class="form-control" name="koordinat" id="koordinat"
-                  value="<?= $destana->koordinat ?>" placeholder="-7.123456, 110.123456" required>
-          </div>
-
-          <div class="form-group">
-            <label for="jenis_bencana">Jenis Bencana</label>
-            <select name="jenis_bencana[]" id="jenis_bencana" class="form-control" multiple required>
-              <?php
-                $opsi = [
-                  'Abrasi', 'Banjir', 'Banjir Bandang', 'Gempa Bumi', 'Karhutla',
-                  'Kebakaran', 'Kekeringan', 'Gunung Meletus', 'Puting Beliung',
-                  'Tanah Longsor', 'Tsunami', 'Bencana Lain'
-                ];
-                $terpilih = isset($destana->jenis_bencana) ? explode(',', $destana->jenis_bencana) : [];
-
-                foreach ($opsi as $bencana) {
-                  $selected = in_array(trim($bencana), $terpilih) ? 'selected' : '';
-                  echo "<option value=\"$bencana\" $selected>$bencana</option>";
-                }
-              ?>
+            <label for="id_kecamatan">Kecamatan</label>
+            <select name="id_kecamatan" id="id_kecamatan" class="form-control" required>
+              <option value="">-- Pilih Kecamatan --</option>
+              <?php foreach ($kecamatan_list as $row): ?>
+                <option value="<?= $row->id_kecamatan ?>" <?= ($row->id_kecamatan == $destana->id_kecamatan) ? 'selected' : '' ?>>
+                  <?= $row->nama_kecamatan ?>
+                </option>
+              <?php endforeach; ?>
             </select>
-            <small class="form-text text-muted">Gunakan Ctrl / Cmd untuk memilih lebih dari satu</small>
+          </div>
+
+          <div class="form-group">
+            <label for="id_desa">Desa</label>
+            <select name="id_desa" id="id_desa" class="form-control" required>
+              <?php if ($mode === 'edit' && !empty($desa_list)): ?>
+                <?php foreach ($desa_list as $row): ?>
+                  <option value="<?= $row->id_desa ?>" <?= ($row->id_desa == $destana->id_desa) ? 'selected' : '' ?>>
+                    <?= $row->nama_desa ?>
+                  </option>
+                <?php endforeach; ?>
+              <?php else: ?>
+                <option value="">-- Pilih Kecamatan Dahulu --</option>
+              <?php endif; ?>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="tahun_pembentukan">Tahun Pembentukan</label>
+            <input type="number" class="form-control" name="tahun_pembentukan" id="tahun_pembentukan"
+                  value="<?= isset($destana->tahun_pembentukan) ? $destana->tahun_pembentukan : '' ?>" required>
+          </div>
+
+          <div class="form-group">
+            <label for="id_sumber_dana">Sumber Dana</label>
+            <select name="id_sumber_dana" id="id_sumber_dana" class="form-control" required>
+              <option value="">-- Pilih Sumber Dana --</option>
+              <?php foreach ($sumber_dana_list as $row): ?>
+                <option value="<?= $row->id_sumber_dana ?>" <?= ($row->id_sumber_dana == $destana->id_sumber_dana) ? 'selected' : '' ?>>
+                  <?= $row->nama_sumber_dana ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="id_kelas">Kelas</label>
+            <select name="id_kelas" id="id_kelas" class="form-control" required>
+              <option value="">-- Pilih Kelas --</option>
+              <?php foreach ($kelas_list as $row): ?>
+                <option value="<?= $row->id_kelas ?>" <?= ($row->id_kelas == $destana->id_kelas) ? 'selected' : '' ?>>
+                  <?= $row->nama_kelas ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Ancaman</label>
+            <div class="d-flex flex-wrap gap-2">
+              <?php
+                $terpilih = isset($destana->jenis_bencana) ? $destana->jenis_bencana : [];
+                foreach ($ancaman_list as $a):
+                  $checked = in_array($a->id_ancaman, $terpilih) ? 'checked' : '';
+              ?>
+                <div class="form-check me-3" style="min-width: 200px;">
+                  <input class="form-check-input" type="checkbox" name="jenis_bencana[]" value="<?= $a->id_ancaman ?>" id="ancaman<?= $a->id_ancaman ?>" <?= $checked ?> style="transform: scale(1.3); margin-right: 8px;">
+                  <label class="form-check-label" for="ancaman<?= $a->id_ancaman ?>" style="font-size: 1rem;">
+                    <?= $a->nama_ancaman ?>
+                  </label>
+                </div>
+              <?php endforeach; ?>
+            </div>
           </div>
 
 
@@ -107,3 +145,41 @@ switch ($mode) {
     </div>
   </div>
 </section>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $('#id_kecamatan').change(function () {
+      var id_kecamatan = $(this).val();
+      var $desa = $('#id_desa');
+      $desa.html('<option value="">Memuat data...</option>');
+
+      if (id_kecamatan) {
+        $.ajax({
+          url: "<?= site_url('destana/get_desa_by_kecamatan') ?>",
+          method: "POST",
+          data: { id_kecamatan: id_kecamatan },
+          dataType: "json",
+          success: function (response) {
+            $desa.empty();
+            if (response.length > 0) {
+              $desa.append('<option value="">-- Pilih Desa --</option>');
+              $.each(response, function (i, desa) {
+                $desa.append('<option value="' + desa.id_desa + '">' + desa.nama_desa + '</option>');
+              });
+            } else {
+              $desa.append('<option value="">Tidak ada desa tersedia</option>');
+            }
+          },
+          error: function (xhr, status, error) {
+            console.log("AJAX Error:", error);
+            console.log("Response Text:", xhr.responseText);
+            $('#id_desa').html('<option value="">Gagal memuat desa</option>');
+          }
+        });
+      } else {
+        $desa.html('<option value="">-- Pilih Kecamatan Dahulu --</option>');
+      }
+    });
+  });
+</script>

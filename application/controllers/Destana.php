@@ -2,16 +2,18 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * @property Destana_model $Destana_model //cuma biar gak merah di vscode hehe gak kebaca ci3 nya
+ * @property Destana_model $Destana_model
+ * @property Destana_ancaman_model $Destana_ancaman_model
  * @property CI_Input $input
+ * @property CI_DB_mysqli_driver $db
  */
-
 class Destana extends CI_Controller
 {
     public function __construct()
     {
         parent::__construct();
         $this->load->model('Destana_model');
+        $this->load->model('Destana_ancaman_model');
         $this->load->library('form_validation');
         $this->load->helper(['url', 'form']);
     }
@@ -35,51 +37,100 @@ class Destana extends CI_Controller
     {
         $data['mode'] = 'create';
         $data['destana'] = null;
+        $data = array_merge($data, $this->Destana_model->get_master_lists());
         $this->load_template('destana_form', $data);
     }
 
     public function store()
     {
         $data = $this->input->post();
-        $data['jenis_bencana'] = implode(', ', $this->input->post('jenis_bencana'));
-        $this->Destana_model->insert($data);
+        $ancaman = $this->input->post('jenis_bencana');
+        unset($data['jenis_bencana']);
+
+        if ($this->Destana_model->insert($data)) {
+            $id = $this->Destana_model->insert_id();
+
+            if (!empty($ancaman)) {
+                foreach ($ancaman as $id_ancaman) {
+                    $this->Destana_ancaman_model->insert([
+                        'id_destana' => $id,
+                        'id_ancaman' => $id_ancaman
+                    ]);
+                }
+            }
+        }
+
         redirect('destana');
     }
 
-    public function edit($no)
+    public function edit($id)
     {
         $data['mode'] = 'edit';
-        $destana = $this->Destana_model->get_by_no(['no' => $no]);
+        $destana = $this->Destana_model->get_by_id($id);
         if (!$destana) {
-        show_error("Data dengan ID $no tidak ditemukan", 404);
+            show_error("Data dengan ID $id tidak ditemukan", 404);
         }
+        $destana->jenis_bencana = $this->Destana_ancaman_model->get_ancaman_ids_by_destana($id);
         $data['destana'] = $destana;
+        $data = array_merge($data, $this->Destana_model->get_master_lists());
         $this->load_template('destana_form', $data);
     }
 
     public function update()
     {
         $data = $this->input->post();
-        $data['jenis_bencana'] = implode(', ', $this->input->post('jenis_bencana'));
-        $this->Destana_model->update(['no' => $data['no']], $data);
+        $id = $data['id'];
+        $ancaman = $this->input->post('jenis_bencana');
+        unset($data['jenis_bencana']);
+
+        $this->Destana_model->update(['id' => $id], $data);
+
+        $this->db->where('id_destana', $id)->delete('destana_ancaman');
+        if (!empty($ancaman)) {
+            foreach ($ancaman as $id_ancaman) {
+                $this->Destana_ancaman_model->insert([
+                    'id_destana' => $id,
+                    'id_ancaman' => $id_ancaman
+                ]);
+            }
+        }
+
         redirect('destana');
     }
 
-    public function delete($no)
+    public function delete($id)
     {
-        $this->Destana_model->delete(['no' => $no]);
+        $this->db->where('id_destana', $id)->delete('destana_ancaman');
+        $this->Destana_model->delete(['id' => $id]);
         redirect('destana');
     }
 
     public function delete_bulk()
     {
-        $selected = $this->input->post('nos');
-        if ($selected) {
-            foreach ($selected as $no) {
-                $this->Destana_model->delete(['no' => $no]);
+        $selected = $this->input->post('ids');
+        if (!empty($selected)) {
+            foreach ($selected as $id) {
+                $this->db->where('id_destana', $id)->delete('destana_ancaman');
+                $this->Destana_model->delete(['id' => $id]);
             }
         }
         redirect('destana');
     }
 
+    public function get_desa_by_kecamatan()
+    {
+        $id_kecamatan = $this->input->post('id_kecamatan');
+
+        $kecamatan = $this->db->get_where('master_kecamatan', ['id_kecamatan' => $id_kecamatan])->row();
+        if (!$kecamatan) {
+            echo json_encode([]);
+            return;
+        }
+
+        $kd_kec = $kecamatan->kode;
+        $this->db->where('kd_kec', $kd_kec);
+        $desa = $this->db->get('master_desa')->result();
+
+        echo json_encode($desa);
+    }
 }
