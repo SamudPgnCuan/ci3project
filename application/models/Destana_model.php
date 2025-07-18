@@ -62,16 +62,59 @@ class Destana_model extends CI_Model {
         return $this->db->get($this->table)->row();
     }
 
-    public function get_master_lists()
+    public function get_master_lists($exclude_used_desa = false)
     {
         return [
             'kecamatan_list'   => $this->db->get('master_kecamatan')->result(),
-            'desa_list'        => $this->db->get('master_desa')->result(),
+            'desa_list'        => $exclude_used_desa ? $this->get_desa_yang_belum_dipakai() : $this->db->get('master_desa')->result(),
             'kelas_list'       => $this->db->get('master_kelas')->result(),
             'sumber_dana_list' => $this->db->get('master_sumber_dana')->result(),
             'ancaman_list'     => $this->db->get('master_ancaman')->result()
         ];
     }
+
+
+    public function get_desa_yang_belum_dipakai($kd_kec = null)
+    {
+        $this->db->select('md.*');
+        $this->db->from('master_desa md');
+        $this->db->join('destana d', 'md.id_desa = d.id_desa', 'left');
+        $this->db->where('d.id_desa IS NULL');
+        if ($kd_kec !== null) {
+            $this->db->where('md.kd_kec', $kd_kec);
+        }
+        return $this->db->get()->result();
+    }
+
+
+    public function get_desa_yang_belum_dipakai_plus_aktif($id_desa_aktif)
+    {
+        $this->db->select('md.*');
+        $this->db->from('master_desa md');
+        $this->db->join('destana d', 'md.id_desa = d.id_desa AND md.id_desa != ' . (int)$id_desa_aktif, 'left');
+        $this->db->where('d.id_desa IS NULL');
+        
+        $desa_baru = $this->db->get()->result();
+        $desa_aktif = $this->db
+            ->get_where('master_desa', ['id_desa' => $id_desa_aktif])
+            ->result();
+
+        return array_merge($desa_aktif, $desa_baru);
+    }
+
+
+    public function get_master_lists_for_edit($id_desa_aktif)
+    {
+        return [
+            'kecamatan_list'   => $this->db->get('master_kecamatan')->result(),
+            'desa_list'        => $this->get_desa_yang_belum_dipakai_plus_aktif($id_desa_aktif),
+            'kelas_list'       => $this->db->get('master_kelas')->result(),
+            'sumber_dana_list' => $this->db->get('master_sumber_dana')->result(),
+            'ancaman_list'     => $this->db->get('master_ancaman')->result()
+        ];
+    }
+
+
 
 
 }

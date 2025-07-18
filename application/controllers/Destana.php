@@ -37,7 +37,10 @@ class Destana extends CI_Controller
     {
         $data['mode'] = 'create';
         $data['destana'] = null;
-        $data = array_merge($data, $this->Destana_model->get_master_lists());
+        
+        $data = array_merge($data, $this->Destana_model->get_master_lists(true));
+        $data['desa_list'] = [];
+        
         $this->load_template('destana_form', $data);
     }
 
@@ -72,7 +75,7 @@ class Destana extends CI_Controller
         }
         $destana->jenis_bencana = $this->Destana_ancaman_model->get_ancaman_ids_by_destana($id);
         $data['destana'] = $destana;
-        $data = array_merge($data, $this->Destana_model->get_master_lists());
+        $data = array_merge($data, $this->Destana_model->get_master_lists_for_edit($destana->id_desa));
         $this->load_template('destana_form', $data);
     }
 
@@ -128,8 +131,8 @@ class Destana extends CI_Controller
         }
 
         $kd_kec = $kecamatan->kode;
-        $this->db->where('kd_kec', $kd_kec);
-        $desa = $this->db->get('master_desa')->result();
+        
+        $desa = $this->Destana_model->get_desa_yang_belum_dipakai($kd_kec);
 
         echo json_encode($desa);
     }
