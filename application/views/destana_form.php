@@ -144,43 +144,49 @@
     </div>
   </section>
 
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
-    $(document).ready(function () {
-      var selectedDesaId = "<?= $destana->id_desa ?>";
+  document.addEventListener("DOMContentLoaded", function () {
+    const selectedDesaId = "<?= $destana->id_desa ?>";
 
-      $('#id_kecamatan').change(function () {
-        var id_kecamatan = $(this).val();
-        var $desa = $('#id_desa');
-        $desa.html('<option value="">Memuat data...</option>');
+    document.getElementById('id_kecamatan').addEventListener('change', function () {
+      const id_kecamatan = this.value;
+      const desaDropdown = document.getElementById('id_desa');
 
-        if (id_kecamatan) {
-          $.ajax({
-            url: "<?= site_url('destana/get_desa_by_kecamatan') ?>",
-            method: "POST",
-            data: { id_kecamatan: id_kecamatan },
-            dataType: "json",
-            success: function (response) {
-              $desa.empty().prop('disabled', false);
-              if (response.length > 0) {
-                $desa.append('<option value="">-- Pilih Desa --</option>');
-                $.each(response, function (i, desa) {
-                  var selected = desa.id_desa == selectedDesaId ? 'selected' : '';
-                  $desa.append('<option value="' + desa.id_desa + '" ' + selected + '>' + desa.nama_desa + '</option>');
-                });
-              } else {
-                $desa.append('<option value="">Tidak ada desa tersedia</option>');
-              }
-            },
-            error: function (xhr, status, error) {
-              console.log("AJAX Error:", error);
-              $('#id_desa').html('<option value="">Gagal memuat desa</option>');
-            }
-          });
-        } else {
-          $desa.html('<option value="">-- Pilih Kecamatan Dahulu --</option>');
-          $desa.prop('disabled', true);
-        }
-      });
+      desaDropdown.innerHTML = '<option value="">Memuat data...</option>';
+      desaDropdown.disabled = true;
+
+      if (id_kecamatan) {
+        fetch("<?= site_url('destana/get_desa_by_kecamatan') ?>", {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: `id_kecamatan=${encodeURIComponent(id_kecamatan)}`
+        })
+        .then(response => response.json())
+        .then(data => {
+          desaDropdown.innerHTML = '';
+          desaDropdown.disabled = false;
+
+          if (data.length > 0) {
+            desaDropdown.innerHTML = '<option value="">-- Pilih Desa --</option>';
+            data.forEach(desa => {
+              const selected = desa.id_desa == selectedDesaId ? 'selected' : '';
+              desaDropdown.innerHTML += `<option value="${desa.id_desa}" ${selected}>${desa.nama_desa}</option>`;
+            });
+          } else {
+            desaDropdown.innerHTML = '<option value="">Tidak ada desa tersedia</option>';
+          }
+        })
+        .catch(err => {
+          console.error('Fetch Error:', err);
+          desaDropdown.innerHTML = '<option value="">Gagal memuat desa</option>';
+        });
+      } else {
+        desaDropdown.innerHTML = '<option value="">-- Pilih Kecamatan Dahulu --</option>';
+        desaDropdown.disabled = true;
+      }
     });
+  });
   </script>
+
