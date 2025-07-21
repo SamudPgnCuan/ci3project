@@ -88,8 +88,18 @@
 
             <div class="form-group">
               <label for="tahun_pembentukan">Tahun Pembentukan</label>
-              <input type="number" class="form-control" name="tahun_pembentukan" id="tahun_pembentukan"
-                    value="<?= isset($destana->tahun_pembentukan) ? $destana->tahun_pembentukan : '' ?>" required>
+              <?php $tahun_sekarang = date('Y'); ?>
+              <select name="tahun_pembentukan" class="form-control" required>
+                <option value="">-- Pilih Tahun --</option>
+                <?php
+                  $tahun_terpilih = isset($destana->tahun_pembentukan) ? $destana->tahun_pembentukan : '';
+                  $tahun_sekarang = max(2010, date('Y'));
+                  for ($tahun = 2010; $tahun <= $tahun_sekarang; $tahun++) {
+                    $selected = $tahun == $tahun_terpilih ? 'selected' : '';
+                    echo "<option value=\"$tahun\" $selected>$tahun</option>";
+                  }
+                ?>
+              </select>
             </div>
 
             <div class="form-group">

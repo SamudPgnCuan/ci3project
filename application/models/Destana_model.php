@@ -6,7 +6,8 @@ class Destana_model extends CI_Model {
 
     protected $table = 'destana';
 
-    public function get_all() {
+    public function get_all($filter = [])
+    {
         $this->db->select('
             d.id,
             mk.nama_kecamatan,
@@ -20,16 +21,45 @@ class Destana_model extends CI_Model {
         $this->db->join('master_desa md', 'd.id_desa = md.id_desa', 'left');
         $this->db->join('master_kelas mkls', 'd.id_kelas = mkls.id_kelas', 'left');
         $this->db->join('master_sumber_dana msd', 'd.id_sumber_dana = msd.id_sumber_dana', 'left');
+
+        if (!empty($filter['id_kecamatan'])) {
+            $this->db->where('d.id_kecamatan', $filter['id_kecamatan']);
+        }
+        if (!empty($filter['id_desa'])) {
+            $this->db->where('d.id_desa', $filter['id_desa']);
+        }
+        if (!empty($filter['tahun'])) {
+            $this->db->where('d.tahun_pembentukan', $filter['tahun']);
+        }
+        if (!empty($filter['id_kelas'])) {
+            $this->db->where('d.id_kelas', $filter['id_kelas']);
+        }
+        if (!empty($filter['id_sumber_dana'])) {
+            $this->db->where('d.id_sumber_dana', $filter['id_sumber_dana']);
+        }
+
+        // filter ancaman
+        if (!empty($filter['id_ancaman'])) {
+            $this->db->where("EXISTS (
+                SELECT 1 FROM destana_ancaman da
+                WHERE da.id_destana = d.id
+                AND da.id_ancaman = " . $this->db->escape($filter['id_ancaman']) . "
+            )", null, false);
+        }
+
+        // $this->db->order_by('mk.nama_kecamatan', 'asc');
+        // $this->db->order_by('md.nama_desa', 'asc');
+
         $query = $this->db->get();
         $result = $query->result_array();
 
-        
         foreach ($result as &$row) {
             $row['ancaman'] = $this->get_nama_ancaman_by_destana($row['id']);
         }
 
         return $result;
     }
+
 
     public function get_nama_ancaman_by_destana($id_destana) {
         $this->db->select('ma.nama_ancaman');

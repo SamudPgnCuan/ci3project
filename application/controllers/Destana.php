@@ -28,10 +28,22 @@ class Destana extends CI_Controller
 
     public function index()
     {
+        $filter = [
+            'id_kecamatan'    => $this->input->get('id_kecamatan'),
+            'id_desa'         => $this->input->get('id_desa'),
+            'tahun'           => $this->input->get('tahun'),
+            'id_kelas'        => $this->input->get('id_kelas'),
+            'id_sumber_dana'  => $this->input->get('id_sumber_dana'),
+            'id_ancaman'      => $this->input->get('id_ancaman'),
+        ];
+
         $data['mode'] = 'list';
-        $data['destana'] = $this->Destana_model->get_all();
+        $data['destana'] = $this->Destana_model->get_all($filter);
+        $data = array_merge($data, $this->Destana_model->get_master_lists());
+
         $this->load_template('destana_list', $data);
     }
+
 
     public function create()
     {
