@@ -1,5 +1,5 @@
 <?php
-  $segment1 = $this->uri->segment(1); // ambil segmen pertama dari URL
+  $segment1 = $this->uri->segment(1); 
 ?>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
   <a href="<?= site_url() ?>" class="brand-link">

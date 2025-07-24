@@ -4,6 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 /**
  * @property Relawan_model $Relawan_model
  * @property CI_Input $input
+ * @property CI_DB_mysqli_driver $db
  */
 
 class Relawan extends CI_Controller
@@ -26,56 +27,74 @@ class Relawan extends CI_Controller
 
     public function index()
     {
-        $data['mode'] = 'list';
-        $data['relawan'] = $this->Relawan_model->get_all(); 
+        $kode_kec = $this->input->get('kecamatan');
+        $id_kecamatan = null;
+
+        if ($kode_kec) {
+            $row = $this->db->get_where('master_kecamatan', ['kode' => $kode_kec])->row();
+            if ($row) {
+                $id_kecamatan = $row->id_kecamatan;
+            }
+        }
+
+        $id_desa = $this->input->get('desa');
+
+        $data['mode']    = 'list';
+        $data['relawan'] = $this->Relawan_model->get_all($id_kecamatan, $id_desa);
+        $data = array_merge($data, $this->Relawan_model->get_master_lists());
+
         $this->load_template('relawan_list', $data);
     }
+
 
     public function create()
     {
         $data['mode'] = 'create';
         $data['relawan'] = null;
+        $data = array_merge($data, $this->Relawan_model->get_master_lists());
         $this->load_template('relawan_form', $data);
     }
 
-    public function store() {
+    public function store()
+    {
         $data = $this->input->post();
         $this->Relawan_model->insert($data);
         redirect('relawan');
     }
 
-    public function edit($nik)
+    public function edit($id)
     {
         $data['mode'] = 'edit';
-        $relawan = $this->Relawan_model->get_by_nik(['no' => $nik]);
+        $relawan = $this->Relawan_model->get_by_id($id);
         if (!$relawan) {
-        show_error("Data dengan ID $nik tidak ditemukan", 404);
+            show_error("Data dengan ID $id tidak ditemukan", 404);
         }
         $data['relawan'] = $relawan;
+        $data = array_merge($data, $this->Relawan_model->get_master_lists());
         $this->load_template('relawan_form', $data);
     }
 
-    public function update($nik) {
+    public function update($id)
+    {
         $data = $this->input->post();
-        $this->Relawan_model->update($nik, $data);
+        $this->Relawan_model->update($id, $data);
         redirect('relawan');
     }
 
-    public function delete($nik)
+    public function delete($id)
     {
-        $this->Relawan_model->delete($nik);
+        $this->Relawan_model->delete($id);
         redirect('relawan');
     }
 
     public function delete_bulk()
     {
-        $niks = $this->input->post('niks');
-        if ($niks) {
-            foreach ($niks as $nik) {
-                $this->Relawan_model->delete($nik);
+        $ids = $this->input->post('ids');
+        if ($ids) {
+            foreach ($ids as $id) {
+                $this->Relawan_model->delete($id);
             }
         }
         redirect('relawan');
     }
-
 }

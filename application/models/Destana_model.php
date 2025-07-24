@@ -22,24 +22,24 @@ class Destana_model extends CI_Model {
         $this->db->join('master_kelas mkls', 'd.id_kelas = mkls.id_kelas', 'left');
         $this->db->join('master_sumber_dana msd', 'd.id_sumber_dana = msd.id_sumber_dana', 'left');
 
-        if (!empty($filter['id_kecamatan'])) {
+        if ($filter['id_kecamatan']) {
             $this->db->where('d.id_kecamatan', $filter['id_kecamatan']);
         }
-        if (!empty($filter['id_desa'])) {
+        if ($filter['id_desa']) {
             $this->db->where('d.id_desa', $filter['id_desa']);
         }
-        if (!empty($filter['tahun'])) {
+        if ($filter['tahun']) {
             $this->db->where('d.tahun_pembentukan', $filter['tahun']);
         }
-        if (!empty($filter['id_kelas'])) {
+        if ($filter['id_kelas']) {
             $this->db->where('d.id_kelas', $filter['id_kelas']);
         }
-        if (!empty($filter['id_sumber_dana'])) {
+        if ($filter['id_sumber_dana']) {
             $this->db->where('d.id_sumber_dana', $filter['id_sumber_dana']);
         }
 
         // filter ancaman
-        if (!empty($filter['id_ancaman'])) {
+        if ($filter['id_ancaman']) {
             $this->db->where("EXISTS (
                 SELECT 1 FROM destana_ancaman da
                 WHERE da.id_destana = d.id

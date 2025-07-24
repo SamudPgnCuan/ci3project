@@ -15,23 +15,63 @@
         </div>
       </div>
 
+      <div class="card-body">
+        <form method="get" id="filterForm">
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label for="filter_kecamatan">Kecamatan</label>
+              
+              <select name="kecamatan" id="filter_kecamatan" class="form-control" onchange="document.getElementById('filterForm').submit()">
+                <option value="">-- Semua Kecamatan --</option>
+                <?php foreach ($kecamatan_list as $k): ?>
+                  <option value="<?= $k->kode ?>" <?= ($this->input->get('kecamatan') == $k->kode) ? 'selected' : '' ?>>
+                    <?= $k->nama_kecamatan ?>
+                  </option>
+                <?php endforeach; ?>
+              </select>
+            </div>
+
+            <div class="form-group col-md-4">
+              <label for="filter_desa">Desa</label>
+              <select name="desa" id="filter_desa" class="form-control" onchange="document.getElementById('filterForm').submit()">
+                <option value="">-- Semua Desa --</option>
+                <?php 
+                  $selectedKec = $this->input->get('kecamatan');
+                  $selectedDesa = $this->input->get('desa');
+                ?>
+                <?php foreach ($desa_list as $d): ?>
+                  <?php 
+                    $isHidden = ($selectedKec && $d->kd_kec != $selectedKec);
+                    $isSelected = ($selectedDesa == $d->id_desa);
+                  ?>
+                  <option 
+                    value="<?= $d->id_desa ?>" 
+                    data-kecamatan="<?= $d->kd_kec ?>" 
+                    <?= $isSelected ? 'selected' : '' ?> 
+                    <?= $isHidden ? 'style="display:none;"' : '' ?>>
+                    <?= $d->nama_desa ?>
+                  </option>
+                <?php endforeach; ?>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+
       <form id="relawanForm" method="post" action="<?= site_url('relawan/delete_bulk') ?>">
         <div class="card-body table-responsive p-0">
           <table class="table table-bordered table-striped">
             <thead class="thead-dark">
               <tr>
-                <th class="text-center align-middle p-0" style="width: 50px;" >
+                <th class="text-center align-middle p-0" style="width: 50px;">
                   <input type="checkbox" id="checkAll" style="transform: scale(1.2);">
                 </th>
                 <th>No</th>
                 <th>Nama</th>
-                <th>NIK</th>
-                <th>Alamat</th>
-                <th>Jenis Kelamin</th>
-                <th>Tanggal Lahir</th>
                 <th>Komunitas</th>
-                <th>No HP</th>
-                <th style="width: 90px;">Aksi</th>
+                <th>Kecamatan</th>
+                <th>Desa</th>
+                <th style="width: 120px;">Aksi</th>
               </tr>
             </thead>
             <tbody>
@@ -39,24 +79,53 @@
                 <?php $no = 1; foreach ($relawan as $r): ?>
                   <tr>
                     <td class="text-center align-middle p-0">
-                      <input type="checkbox" name="niks[]" value="<?= $r->nik ?>" style="transform: scale(1.2);">
+                      <input type="checkbox" name="ids[]" value="<?= $r->id ?>" style="transform: scale(1.2);">
                     </td>
                     <td><?= $no++ ?></td>
                     <td><?= $r->nama ?></td>
-                    <td><?= $r->nik ?></td>
-                    <td><?= $r->alamat ?></td>
-                    <td><?= $r->jenis_kelamin ?></td>
-                    <td><?= $r->tanggal_lahir ?></td>
                     <td><?= $r->komunitas ?></td>
-                    <td><?= $r->no_hp ?></td>
+                    <td><?= $r->nama_kecamatan ?></td>
+                    <td><?= $r->nama_desa ?></td>
                     <td class="text-center">
-                      <a href="<?= site_url('relawan/edit/' . $r->nik) ?>" class="btn btn-sm btn-warning">Edit</a>
+                      <a href="<?= site_url('relawan/edit/' . $r->id) ?>" class="btn btn-sm btn-warning">Edit</a>
+                      <button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#detailModal<?= $r->id ?>">Detail</button>
                     </td>
                   </tr>
+
+                  <!-- Modal Detail -->
+                  <div class="modal fade" id="detailModal<?= $r->id ?>" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel<?= $r->id ?>" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-scrollable" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="detailModalLabel<?= $r->id ?>">Detail Relawan: <?= $r->nama ?></h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <ul class="list-group">
+                            <li class="list-group-item"><strong>NIK:</strong> <?= $r->nik ?></li>
+                            <li class="list-group-item"><strong>Alamat:</strong> <?= $r->alamat ?></li>
+                            <li class="list-group-item"><strong>Jenis Kelamin:</strong> <?= $r->jenis_kelamin ?></li>
+                            <li class="list-group-item"><strong>Tempat Lahir:</strong> <?= $r->tempat_lahir ?></li>
+                            <li class="list-group-item"><strong>Tanggal Lahir:</strong> <?= $r->tanggal_lahir ?></li>
+                            <li class="list-group-item"><strong>Komunitas:</strong> <?= $r->komunitas ?></li>
+                            <li class="list-group-item"><strong>Kecamatan:</strong> <?= $r->nama_kecamatan ?></li>
+                            <li class="list-group-item"><strong>Desa:</strong> <?= $r->nama_desa ?></li>
+                            <li class="list-group-item"><strong>Pekerjaan:</strong> <?= $r->pekerjaan ?></li>
+                            <li class="list-group-item"><strong>No HP:</strong> <?= $r->no_hp ?></li>
+                          </ul>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 <?php endforeach; ?>
               <?php else: ?>
                 <tr>
-                  <td colspan="10" class="text-center">Tidak ada data.</td>
+                  <td colspan="7" class="text-center">Tidak ada data.</td>
                 </tr>
               <?php endif; ?>
             </tbody>
@@ -66,7 +135,7 @@
         <div class="card-footer d-flex justify-content-between">
           <?php if (!empty($relawan)): ?>
             <button type="submit" formaction="<?= site_url('relawan/delete_bulk') ?>" class="btn btn-danger" onclick="return confirm('Hapus data yang dipilih?')">
-                <i class="fas fa-trash-alt"></i> Hapus (centang data terlebih dahulu)
+              <i class="fas fa-trash-alt"></i> Hapus (centang data terlebih dahulu)
             </button>
           <?php else: ?>
             <div></div>
@@ -75,29 +144,37 @@
           <a href="<?= site_url('relawan/create') ?>" class="btn btn-primary">Tambah Relawan</a>
         </div>
       </form>
+
     </div>
 
   </div>
 </section>
 
+<!-- JS agar desa menyesuaikan kecamatan -->
 <script>
-  const checkAll = document.getElementById('checkAll');
-  const checkboxes = document.querySelectorAll('input[name="nos[]"]');
+  const kecamatanSelect = document.getElementById('filter_kecamatan');
+  const desaSelect = document.getElementById('filter_desa');
 
-  // pilih semua
-  checkAll.addEventListener('change', function () {
-    checkboxes.forEach(cb => cb.checked = this.checked);
-  });
+  kecamatanSelect.addEventListener('change', function () {
+    const selectedKecamatan = this.value;
 
-  // salah satu uncheck
-  checkboxes.forEach(cb => {
-    cb.addEventListener('change', function () {
-      if (!this.checked) {
-        checkAll.checked = false;
+    Array.from(desaSelect.options).forEach(option => {
+      if (!option.value) return option.hidden = false; // "-- Semua Desa --"
+      if (!selectedKecamatan) {
+        option.hidden = false;
+        option.style.display = 'block';
+      } else if (option.dataset.kecamatan === selectedKecamatan) {
+        option.hidden = false;
+        option.style.display = 'block';
       } else {
-        const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-        checkAll.checked = allChecked;
+        option.hidden = true;
+        option.style.display = 'none';
       }
     });
+
+    // Reset desa jika tidak cocok
+    if (desaSelect.options[desaSelect.selectedIndex].hidden) {
+      desaSelect.selectedIndex = 0;
+    }
   });
 </script>

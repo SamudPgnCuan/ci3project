@@ -11,20 +11,22 @@ if (!isset($relawan)) {
     'nik' => '',
     'alamat' => '',
     'jenis_kelamin' => '',
+    'tempat_lahir' => '',
     'tanggal_lahir' => '',
     'komunitas' => '',
+    'id_kecamatan' => '',
+    'id_desa' => '',
+    'pekerjaan' => '',
     'no_hp' => ''
   ];
 }
 
-// Variabel dinamis tergantung mode
 switch ($mode) {
   case 'edit':
     $judul_halaman = 'Edit Relawan';
     $judul_form = 'Form Edit Relawan';
-    $aksi = 'relawan/update/' . $relawan->nik;
+    $aksi = 'relawan/update/' . $relawan->id;
     $label_tombol = 'Update';
-    $readonly_nik = 'readonly';
     break;
 
   case 'create':
@@ -33,7 +35,6 @@ switch ($mode) {
     $judul_form = 'Form Tambah Relawan';
     $aksi = 'relawan/store';
     $label_tombol = 'Simpan';
-    $readonly_nik = '';
     break;
 }
 ?>
@@ -68,7 +69,9 @@ switch ($mode) {
           <div class="form-group">
             <label for="nik">NIK</label>
             <input type="text" class="form-control" name="nik" id="nik"
-                   value="<?= $relawan->nik ?>" <?= $readonly_nik ?> required>
+              value="<?= $relawan->nik ?>" required 
+              pattern="\d{16}" maxlength="16" inputmode="numeric"
+              title="NIK harus terdiri dari 16 digit angka ;) ">
           </div>
 
           <div class="form-group">
@@ -80,9 +83,15 @@ switch ($mode) {
             <label for="jenis_kelamin">Jenis Kelamin</label>
             <select name="jenis_kelamin" class="form-control" id="jenis_kelamin" required>
               <option value="">-- Pilih Jenis Kelamin --</option>
-              <option value="Laki-laki" <?= $relawan->jenis_kelamin === 'Laki-laki' ? 'selected' : '' ?>>Laki-laki</option>
-              <option value="Perempuan" <?= $relawan->jenis_kelamin === 'Perempuan' ? 'selected' : '' ?>>Perempuan</option>
+              <option value="L" <?= $relawan->jenis_kelamin === 'L' ? 'selected' : '' ?>>Laki-laki</option>
+              <option value="P" <?= $relawan->jenis_kelamin === 'P' ? 'selected' : '' ?>>Perempuan</option>
             </select>
+          </div>
+
+          <div class="form-group">
+            <label for="tempat_lahir">Tempat Lahir</label>
+            <input type="text" class="form-control" name="tempat_lahir" id="tempat_lahir"
+                   value="<?= $relawan->tempat_lahir ?>" required>
           </div>
 
           <div class="form-group">
@@ -98,9 +107,41 @@ switch ($mode) {
           </div>
 
           <div class="form-group">
+            <label for="id_kecamatan">Kecamatan</label>
+            <select name="id_kecamatan" class="form-control" id="id_kecamatan" required>
+              <option value="">-- Pilih Kecamatan --</option>
+              <?php foreach ($kecamatan_list as $k): ?>
+                <option value="<?= $k->id_kecamatan ?>" <?= $relawan->id_kecamatan == $k->id_kecamatan ? 'selected' : '' ?>>
+                  <?= $k->nama_kecamatan ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="id_desa">Desa</label>
+            <select name="id_desa" class="form-control" id="id_desa" required>
+              <option value="">-- Pilih Desa --</option>
+              <?php foreach ($desa_list as $d): ?>
+                <option value="<?= $d->id_desa ?>" <?= $relawan->id_desa == $d->id_desa ? 'selected' : '' ?>>
+                  <?= $d->nama_desa ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="pekerjaan">Pekerjaan</label>
+            <input type="text" class="form-control" name="pekerjaan" id="pekerjaan"
+              value="<?= $relawan->pekerjaan ?>" required>
+          </div>
+
+          <div class="form-group">
             <label for="no_hp">No HP</label>
             <input type="text" class="form-control" name="no_hp" id="no_hp"
-                   value="<?= $relawan->no_hp ?>" required>
+                  value="<?= $relawan->no_hp ?>" required
+                  pattern="\d+" inputmode="numeric"
+                  title="No HP hanya boleh berisi angka saja :D">
           </div>
         </div>
 
