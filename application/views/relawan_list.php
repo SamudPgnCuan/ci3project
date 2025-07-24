@@ -9,20 +9,23 @@
 
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title">Tabel Relawan</h3>
+        <a href="<?= site_url('relawan/create') ?>" class="btn btn-primary">Tambah Relawan</a>
         <div class="card-tools">
-          <a href="<?= site_url('welcome') ?>" class="btn btn-secondary btn-sm">← Kembali ke Halaman Utama</a>
+          <a href="<?= site_url('welcome') ?>" class="btn btn-secondary btn">← Kembali ke Halaman Utama</a>
         </div>
       </div>
 
+      <!-- filter -->
       <div class="card-body">
-        <form method="get" id="filterForm">
-          <div class="form-row">
-            <div class="form-group col-md-4">
+
+        <form method="get" id="filterForm" action="<?= site_url('relawan') ?>">
+          <div class="row">
+            
+            <div class="col-md-4">
               <label for="filter_kecamatan">Kecamatan</label>
-              
               <select name="kecamatan" id="filter_kecamatan" class="form-control" onchange="document.getElementById('filterForm').submit()">
                 <option value="">-- Semua Kecamatan --</option>
+
                 <?php foreach ($kecamatan_list as $k): ?>
                   <option value="<?= $k->kode ?>" <?= ($this->input->get('kecamatan') == $k->kode) ? 'selected' : '' ?>>
                     <?= $k->nama_kecamatan ?>
@@ -31,7 +34,7 @@
               </select>
             </div>
 
-            <div class="form-group col-md-4">
+            <div class="col-md-4">
               <label for="filter_desa">Desa</label>
               <select name="desa" id="filter_desa" class="form-control" onchange="document.getElementById('filterForm').submit()">
                 <option value="">-- Semua Desa --</option>
@@ -54,9 +57,16 @@
                 <?php endforeach; ?>
               </select>
             </div>
+
+            <div class="col-md-12 mt-3">
+              <a href="<?= site_url('relawan') ?>" class="btn btn-secondary">Reset</a>
+            </div>
+
           </div>
         </form>
       </div>
+
+      <!-- filter sampai sini ^ ? -->
 
       <form id="relawanForm" method="post" action="<?= site_url('relawan/delete_bulk') ?>">
         <div class="card-body table-responsive p-0">
@@ -140,18 +150,17 @@
           <?php else: ?>
             <div></div>
           <?php endif; ?>
-
-          <a href="<?= site_url('relawan/create') ?>" class="btn btn-primary">Tambah Relawan</a>
         </div>
       </form>
-
     </div>
 
   </div>
 </section>
 
-<!-- JS agar desa menyesuaikan kecamatan -->
+<!-- JS -->
 <script>
+
+  // filter
   const kecamatanSelect = document.getElementById('filter_kecamatan');
   const desaSelect = document.getElementById('filter_desa');
 
