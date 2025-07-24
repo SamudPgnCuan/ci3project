@@ -23,15 +23,15 @@
             
             <div class="col-md-4">
               <label for="filter_kecamatan">Kecamatan</label>
-              <select name="kecamatan" id="filter_kecamatan" class="form-control" onchange="document.getElementById('filterForm').submit()">
-                <option value="">-- Semua Kecamatan --</option>
+              <input list="kecamatanList" name="kecamatan" id="filter_kecamatan" class="form-control"
+                    onchange="document.getElementById('filterForm').submit()"
+                    value="<?= $this->input->get('kecamatan') ?>">
 
+              <datalist id="kecamatanList">
                 <?php foreach ($kecamatan_list as $k): ?>
-                  <option value="<?= $k->kode ?>" <?= ($this->input->get('kecamatan') == $k->kode) ? 'selected' : '' ?>>
-                    <?= $k->nama_kecamatan ?>
-                  </option>
+                  <option value="<?= $k->kode ?>"><?= $k->nama_kecamatan ?></option>
                 <?php endforeach; ?>
-              </select>
+              </datalist>
             </div>
 
             <div class="col-md-4">
