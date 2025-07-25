@@ -23,15 +23,15 @@
             
             <div class="col-md-4">
               <label for="filter_kecamatan">Kecamatan</label>
-              <input list="kecamatanList" name="kecamatan" id="filter_kecamatan" class="form-control"
-                    onchange="document.getElementById('filterForm').submit()"
-                    value="<?= $this->input->get('kecamatan') ?>">
-
-              <datalist id="kecamatanList">
+              <select name="kecamatan" id="filter_kecamatan" class="form-control">
+                <option value="">-- Semua Kecamatan --</option>
                 <?php foreach ($kecamatan_list as $k): ?>
-                  <option value="<?= $k->kode ?>"><?= $k->nama_kecamatan ?></option>
+                  <option value="<?= $k->kode ?>" <?= ($this->input->get('kecamatan') == $k->kode) ? 'selected' : '' ?>>
+                    <?= $k->nama_kecamatan ?>
+                  </option>
                 <?php endforeach; ?>
-              </datalist>
+              </select>
+
             </div>
 
             <div class="col-md-4">
@@ -157,33 +157,5 @@
   </div>
 </section>
 
-<!-- JS -->
-<script>
 
-  // filter
-  const kecamatanSelect = document.getElementById('filter_kecamatan');
-  const desaSelect = document.getElementById('filter_desa');
 
-  kecamatanSelect.addEventListener('change', function () {
-    const selectedKecamatan = this.value;
-
-    Array.from(desaSelect.options).forEach(option => {
-      if (!option.value) return option.hidden = false; // "-- Semua Desa --"
-      if (!selectedKecamatan) {
-        option.hidden = false;
-        option.style.display = 'block';
-      } else if (option.dataset.kecamatan === selectedKecamatan) {
-        option.hidden = false;
-        option.style.display = 'block';
-      } else {
-        option.hidden = true;
-        option.style.display = 'none';
-      }
-    });
-
-    // Reset desa jika tidak cocok
-    if (desaSelect.options[desaSelect.selectedIndex].hidden) {
-      desaSelect.selectedIndex = 0;
-    }
-  });
-</script>

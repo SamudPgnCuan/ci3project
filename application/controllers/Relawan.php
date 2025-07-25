@@ -43,7 +43,13 @@ class Relawan extends CI_Controller
         $data['relawan'] = $this->Relawan_model->get_all($id_kecamatan, $id_desa);
         $data = array_merge($data, $this->Relawan_model->get_master_lists());
 
-        $this->load_template('relawan_list', $data);
+        $data['load_select2'] = true;
+        $data['custom_script'] = 'relawan.js';
+        
+        $this->load->view('template/header');
+        $this->load->view('template/sidebar');
+        $this->load->view('relawan_list.php', $data);
+        $this->load->view('template/footer');
     }
 
 
