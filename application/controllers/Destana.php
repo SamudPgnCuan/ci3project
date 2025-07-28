@@ -134,7 +134,7 @@ class Destana extends CI_Controller
 
     public function get_desa_by_kecamatan()
     {
-        $id_kecamatan = $this->input->post('id_kecamatan');
+        $id_kecamatan = $this->input->post('id_kecamatan'); //jelek kalo pencet filter gabisa
 
         $kecamatan = $this->db->get_where('master_kecamatan', ['id_kecamatan' => $id_kecamatan])->row();
         if (!$kecamatan) {

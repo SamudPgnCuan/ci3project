@@ -57,28 +57,4 @@ class Relawan_model extends CI_Model
         ];
     }
 
-    public function get_filtered($id_kecamatan = null, $id_desa = null)
-    {
-        $this->db
-            ->select('r.*, mk.nama_kecamatan, md.nama_desa')
-            ->from($this->table . ' r')
-            ->join('master_kecamatan mk', 'mk.id_kecamatan = r.id_kecamatan')
-            ->join('master_desa md', 'md.id_desa = r.id_desa');
-
-        if (!empty($id_kecamatan)) {
-            $this->db->where('r.id_kecamatan', $id_kecamatan);
-        }
-
-        if (!empty($id_desa)) {
-            $this->db->where('r.id_desa', $id_desa);
-        }
-
-        return $this->db->get()->result();
-    }
-
-    public function get_kecamatan_by_kode($kode)
-    {
-        return $this->db->get_where('master_kecamatan', ['kode' => $kode])->row();
-    }
-
 }

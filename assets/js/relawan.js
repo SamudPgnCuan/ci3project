@@ -23,13 +23,43 @@ document.addEventListener('DOMContentLoaded', function () {
     }, 0);
   });
 
+   // Fungsi untuk memfilter desa berdasarkan kecamatan
+  function filterDesaOptions() {
+    const selectedKecamatanId = $('#filter_kecamatan').val(); // ID numerik
+    const desaSelect = $('#filter_desa');
+
+    desaSelect.empty(); // Bersihkan dropdown desa
+
+    if (!selectedKecamatanId) {
+      desaSelect.trigger('change');
+      return;
+    }
+
+    fetch(base_url + 'relawan/get_desa_by_kecamatan?kecamatan=' + selectedKecamatanId)
+      .then(response => response.json())
+      .then(data => {
+        desaSelect.append(new Option('', '', true, true)); // Tambahkan opsi kosong
+
+        data.forEach(desa => {
+          desaSelect.append(new Option(desa.nama_desa, desa.id_desa));
+        });
+
+        desaSelect.trigger('change');
+      })
+      .catch(error => {
+        console.error('Gagal mengambil data desa:', error);
+      });
+  }
+
+
+
   // Submit otomatis jika filter kecamatan diubah
   $('#filter_kecamatan').on('change', function () {
     $('#filterForm').submit();
   });
 
-  // Jika ingin desa juga memicu submit otomatis, aktifkan ini:
-  // $('#filter_desa').on('change', function () {
-  //   $('#filterForm').submit();
-  // });
+  //Jika ingin desa juga memicu submit otomatis, aktifkan ini:
+  $('#filter_desa').on('change', function () {
+    $('#filterForm').submit();
+  });
 });

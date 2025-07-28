@@ -26,17 +26,16 @@
               <select name="kecamatan" id="filter_kecamatan" class="form-control">
                 <option value="">-- Semua Kecamatan --</option>
                 <?php foreach ($kecamatan_list as $k): ?>
-                  <option value="<?= $k->kode ?>" <?= ($this->input->get('kecamatan') == $k->kode) ? 'selected' : '' ?>>
+                  <option value="<?= $k->id_kecamatan  ?>" <?= ($this->input->get('kecamatan') == $k->id_kecamatan ) ? 'selected' : '' ?>>
                     <?= $k->nama_kecamatan ?>
                   </option>
                 <?php endforeach; ?>
               </select>
-
             </div>
 
             <div class="col-md-4">
               <label for="filter_desa">Desa</label>
-              <select name="desa" id="filter_desa" class="form-control" onchange="document.getElementById('filterForm').submit()">
+              <select name="desa" id="filter_desa" class="form-control">
                 <option value="">-- Semua Desa --</option>
                 <?php 
                   $selectedKec = $this->input->get('kecamatan');
@@ -50,8 +49,7 @@
                   <option 
                     value="<?= $d->id_desa ?>" 
                     data-kecamatan="<?= $d->kd_kec ?>" 
-                    <?= $isSelected ? 'selected' : '' ?> 
-                    <?= $isHidden ? 'style="display:none;"' : '' ?>>
+                    <?= $isSelected ? 'selected' : '' ?>> 
                     <?= $d->nama_desa ?>
                   </option>
                 <?php endforeach; ?>
