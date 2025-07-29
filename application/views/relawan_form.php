@@ -107,12 +107,14 @@ switch ($mode) {
           </div>
 
           <div class="form-group">
-            <label for="id_kecamatan">Kecamatan</label>
-            <select name="id_kecamatan" class="form-control" id="id_kecamatan" required>
+            <label for="kecamatan">Kecamatan</label>
+            <select name="kecamatan" class="form-control" id="id_kecamatan" required>
               <option value="">-- Pilih Kecamatan --</option>
               <?php foreach ($kecamatan_list as $k): ?>
-                <option value="<?= $k->id_kecamatan ?>" <?= $relawan->id_kecamatan == $k->id_kecamatan ? 'selected' : '' ?>>
-                  <?= $k->nama_kecamatan ?>
+                <option 
+                value="<?= $k->id_kecamatan ?>" 
+                <?= $relawan->id_kecamatan == $k->id_kecamatan ? 'selected' : '' ?>>
+                <?= $k->nama_kecamatan ?>
                 </option>
               <?php endforeach; ?>
             </select>
