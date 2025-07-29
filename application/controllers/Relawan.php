@@ -27,16 +27,7 @@ class Relawan extends CI_Controller
 
     public function index()
     {
-        $kode_kec = $this->input->get('kecamatan');
-        $id_kecamatan = null;
-
-        if ($kode_kec) {
-            $row = $this->db->get_where('master_kecamatan', ['kode' => $kode_kec])->row();
-            if ($row) {
-                $id_kecamatan = $row->id_kecamatan;
-            }
-        }
-
+        $id_kecamatan = $this->input->get('kecamatan');
         $id_desa = $this->input->get('desa');
 
         $data['mode']    = 'list';
@@ -46,10 +37,7 @@ class Relawan extends CI_Controller
         $data['load_select2'] = true;
         $data['custom_script'] = 'relawan.js';
         
-        $this->load->view('template/header');
-        $this->load->view('template/sidebar');
-        $this->load->view('relawan_list.php', $data);
-        $this->load->view('template/footer');
+        $this->load_template('relawan_list', $data);
     }
 
 
@@ -106,15 +94,23 @@ class Relawan extends CI_Controller
 
     public function get_desa_by_kecamatan()
     {
+        header('Content-Type: application/json');
+
         $id_kecamatan = $this->input->get('kecamatan'); 
 
+        // Debug: log input
+        log_message('debug', 'ID Kecamatan: ' . $id_kecamatan);
+        
         // Ambil kode dari master_kecamatan berdasarkan ID
         $kecamatan = $this->db->get_where('master_kecamatan', ['id_kecamatan' => $id_kecamatan])->row();
 
         if (!$kecamatan) {
+            log_message('debug', 'Kecamatan tidak ditemukan untuk ID: ' . $id_kecamatan);
             echo json_encode([]); // Jika tidak ketemu, kirim data kosong
             return;
         }
+
+        log_message('debug', 'Kode Kecamatan: ' . $kecamatan->kode);
 
         // Ambil semua desa dengan kd_kec yang sesuai dengan kode dari kecamatan
         $desa = $this->db
@@ -122,6 +118,8 @@ class Relawan extends CI_Controller
                     ->where('kd_kec', $kecamatan->kode)
                     ->get('master_desa')
                     ->result();
+
+        log_message('debug', 'Jumlah desa ditemukan: ' . count($desa));
 
         echo json_encode($desa);
     }

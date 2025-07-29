@@ -26,8 +26,10 @@
               <select name="kecamatan" id="filter_kecamatan" class="form-control">
                 <option value="">-- Semua Kecamatan --</option>
                 <?php foreach ($kecamatan_list as $k): ?>
-                  <option value="<?= $k->id_kecamatan  ?>" <?= ($this->input->get('kecamatan') == $k->id_kecamatan ) ? 'selected' : '' ?>>
-                    <?= $k->nama_kecamatan ?>
+                  <option 
+                  value="<?= $k->id_kecamatan  ?>" 
+                  <?= ($this->input->get('kecamatan') == $k->id_kecamatan ) ? 'selected' : '' ?>>
+                  <?= $k->nama_kecamatan ?>
                   </option>
                 <?php endforeach; ?>
               </select>
@@ -35,26 +37,12 @@
 
             <div class="col-md-4">
               <label for="filter_desa">Desa</label>
-              <select name="desa" id="filter_desa" class="form-control">
+              <select name="desa" id="filter_desa" class="form-control" data-selected="<?= $this->input->get('desa') ?>">
                 <option value="">-- Semua Desa --</option>
-                <?php 
-                  $selectedKec = $this->input->get('kecamatan');
-                  $selectedDesa = $this->input->get('desa');
-                ?>
-                <?php foreach ($desa_list as $d): ?>
-                  <?php 
-                    $isHidden = ($selectedKec && $d->kd_kec != $selectedKec);
-                    $isSelected = ($selectedDesa == $d->id_desa);
-                  ?>
-                  <option 
-                    value="<?= $d->id_desa ?>" 
-                    data-kecamatan="<?= $d->kd_kec ?>" 
-                    <?= $isSelected ? 'selected' : '' ?>> 
-                    <?= $d->nama_desa ?>
-                  </option>
-                <?php endforeach; ?>
+                <!-- dari javascript i think -->
               </select>
             </div>
+          </div>
 
             <div class="col-md-12 mt-3">
               <a href="<?= site_url('relawan') ?>" class="btn btn-secondary">Reset</a>
@@ -155,5 +143,79 @@
   </div>
 </section>
 
+<script>
+var base_url = '<?= base_url() ?>';
+</script>
 
+<!-- testttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt -->
+
+<button type="button" onclick="testDesa()" class="btn btn-info">Test Load Desa</button>
+<button type="button" onclick="debugDataStructure()" class="btn btn-warning">Debug Data</button>
+
+<script>
+function testDesa() {
+    const kecamatanId = $('#filter_kecamatan').val() || 1;
+    
+    $.get(base_url + 'relawan/get_desa_by_kecamatan?kecamatan=' + kecamatanId)
+        .done(function(data) {
+            console.log('Raw data:', data);
+            console.log('Data type:', typeof data);
+            console.log('Is array:', Array.isArray(data));
+            
+            // Reset dropdown
+            $('#filter_desa').empty().append(new Option('-- Semua Desa --', ''));
+            
+            // Handle different data types
+            let processedData = [];
+            
+            if (typeof data === 'string') {
+                try {
+                    processedData = JSON.parse(data);
+                } catch (e) {
+                    alert('Error: Data bukan JSON valid');
+                    return;
+                }
+            } else if (Array.isArray(data)) {
+                processedData = data;
+            } else {
+                alert('Error: Data bukan array. Type: ' + typeof data);
+                return;
+            }
+            
+            // Add options
+            if (processedData && processedData.length > 0) {
+                processedData.forEach(function(desa) {
+                    if (desa && desa.nama_desa && desa.id_desa) {
+                        $('#filter_desa').append(new Option(desa.nama_desa, desa.id_desa));
+                    }
+                });
+                $('#filter_desa').trigger('change');
+                alert('Berhasil! ' + processedData.length + ' desa loaded');
+            } else {
+                alert('Tidak ada data desa');
+            }
+        })
+        .fail(function(xhr, status, error) {
+            alert('AJAX gagal: ' + error);
+        });
+}
+
+function debugDataStructure() {
+    const kecamatanId = $('#filter_kecamatan').val() || 1;
+    
+    $.get(base_url + 'relawan/get_desa_by_kecamatan?kecamatan=' + kecamatanId)
+        .done(function(data) {
+            console.log('=== DATA DEBUG ===');
+            console.log('Raw data:', data);
+            console.log('Type:', typeof data);
+            console.log('Is Array:', Array.isArray(data));
+            
+            if (data && data.length > 0) {
+                console.log('First item:', data[0]);
+            }
+            
+            alert('Debug selesai! Cek console untuk detail');
+        });
+}
+</script>
 

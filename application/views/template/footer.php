@@ -23,7 +23,7 @@
 <?php if ($load_select2 === true) : ?>
   <link href="<?= base_url('assets/adminlte/plugins/select2/css/select2.min.css') ?>" rel="stylesheet">
   <script src="<?= base_url('assets/adminlte/plugins/select2/js/select2.full.min.js') ?>"></script>
-  <link href="<?= base_url('assets/css/select2-custom.css') ?>" rel="stylesheet"> <!-- tambahkan ini -->
+  <link href="<?= base_url('assets/css/select2-custom.css') ?>" rel="stylesheet"> 
 <?php endif; ?>
 
 <!-- custom script -->
