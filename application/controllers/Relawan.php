@@ -98,9 +98,6 @@ class Relawan extends CI_Controller
 
         $id_kecamatan = $this->input->get('kecamatan'); 
 
-        // Debug: log input
-        log_message('debug', 'ID Kecamatan: ' . $id_kecamatan);
-        
         // Ambil kode dari master_kecamatan berdasarkan ID
         $kecamatan = $this->db->get_where('master_kecamatan', ['id_kecamatan' => $id_kecamatan])->row();
 
@@ -110,16 +107,11 @@ class Relawan extends CI_Controller
             return;
         }
 
-        log_message('debug', 'Kode Kecamatan: ' . $kecamatan->kode);
-
-        // Ambil semua desa dengan kd_kec yang sesuai dengan kode dari kecamatan
         $desa = $this->db
                     ->select('id_desa, nama_desa')
                     ->where('kd_kec', $kecamatan->kode)
                     ->get('master_desa')
                     ->result();
-
-        log_message('debug', 'Jumlah desa ditemukan: ' . count($desa));
 
         echo json_encode($desa);
     }

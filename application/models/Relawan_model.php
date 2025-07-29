@@ -17,7 +17,7 @@ class Relawan_model extends CI_Model
             $this->db->where('r.id_kecamatan', $id_kecamatan);
         }
 
-        if ($id_desa) {
+        if ($id_desa && $id_desa != 'all') { //kalo ada tapi bukan 'all', baru ambil sesuai id
             $this->db->where('r.id_desa', $id_desa);
         }
 

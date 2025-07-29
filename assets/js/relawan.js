@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Inisialisasi Select2 untuk filter kecamatan
   $('#filter_kecamatan').select2({
-    //placeholder: 'Pilih Kecamatan',
+    placeholder: 'Pilih Kecamatan',
     allowClear: true,
     width: '100%',
     dropdownParent: $('#filter_kecamatan').parent()
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Inisialisasi Select2 untuk filter desa
   $('#filter_desa').select2({
-    placeholder: 'Pilih Desa',
+    placeholder: 'pilih kecamatan dulu? :3',
     allowClear: true,
     width: '100%',
     dropdownParent: $('#filter_desa').parent()
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
   desaSelect.empty(); // Hapus semua opsi sebelumnya
 
   if (!selectedKecamatanId) {
-    desaSelect.append(new Option('-- pilih kecamatan dulu --')); 
+    //desaSelect.append(new Option('-- pilih kecamatan dulu --')); 
     desaSelect.trigger('change.select2'); // Paksa refresh
     return;
   }
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
   fetch(base_url + 'relawan/get_desa_by_kecamatan?kecamatan=' + selectedKecamatanId)
     .then(response => response.json())
     .then(data => {
-      desaSelect.append(new Option('-- Semua Desa --', '', false, preselectId === null)); // Tambahkan default
+      desaSelect.append(new Option('-- Semua Desa --', 'all', false, preselectId === 'all')); // Tambahkan default
 
       data.forEach(desa => {
         const isSelected = desa.id_desa == preselectId;
