@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Inisialisasi Select2 untuk filter kecamatan
   $('#filter_kecamatan').select2({
-    placeholder: 'Pilih Kecamatan',
+    //placeholder: 'Pilih Kecamatan',
     allowClear: true,
     width: '100%',
     dropdownParent: $('#filter_kecamatan').parent()
@@ -32,13 +32,13 @@ document.addEventListener('DOMContentLoaded', function () {
    // Fungsi untuk memfilter desa berdasarkan kecamatan
   function filterDesaOptions(preselectId = null) {
 
-  const selectedKecamatanId = $('#filter_kecamatan').val(); // ID numerik
+  const selectedKecamatanId = $('#filter_kecamatan').val(); //i forgor why this needs .val()
   const desaSelect = $('#filter_desa');
 
   desaSelect.empty(); // Hapus semua opsi sebelumnya
 
   if (!selectedKecamatanId) {
-    desaSelect.append(new Option('-- Semua Desa --', '', true, true)); // selected & default
+    desaSelect.append(new Option('-- pilih kecamatan dulu --')); 
     desaSelect.trigger('change.select2'); // Paksa refresh
     return;
   }

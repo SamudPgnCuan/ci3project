@@ -24,7 +24,7 @@
             <div class="col-md-4">
               <label for="filter_kecamatan">Kecamatan</label>
               <select name="kecamatan" id="filter_kecamatan" class="form-control">
-                <option value="">-- Semua Kecamatan --</option>
+                <option value="">-- semua kecamatan --</option>
                 <?php foreach ($kecamatan_list as $k): ?>
                   <option 
                   value="<?= $k->id_kecamatan  ?>" 
@@ -38,7 +38,7 @@
             <div class="col-md-4">
               <label for="filter_desa">Desa</label>
               <select name="desa" id="filter_desa" class="form-control" data-selected="<?= $this->input->get('desa') ?>">
-                <option value="">-- Semua Desa --</option>
+                <option value="">-- if you see this on web something probably broke --</option>
                 <!-- dari javascript i think -->
               </select>
             </div>

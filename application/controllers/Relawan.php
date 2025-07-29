@@ -35,7 +35,7 @@ class Relawan extends CI_Controller
         $data = array_merge($data, $this->Relawan_model->get_master_lists());
 
         $data['load_select2'] = true;
-        $data['custom_script'] = 'relawan.js';
+        $data['scripts'] = ['relawan.js'];
         
         $this->load_template('relawan_list', $data);
     }

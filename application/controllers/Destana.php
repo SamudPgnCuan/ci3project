@@ -41,7 +41,6 @@ class Destana extends CI_Controller
         $data['destana'] = $this->Destana_model->get_all($filter);
         $data = array_merge($data, $this->Destana_model->get_master_lists());
 
-        $data['load_select2'] = false;
         $this->load_template('destana_list', $data);
     }
 
