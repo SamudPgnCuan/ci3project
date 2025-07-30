@@ -2,6 +2,8 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
+
+
   const preselectedDesaId = $('#filter_desa').data('selected');
   filterDesaOptions(preselectedDesaId); 
 
@@ -31,6 +33,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
    // Fungsi untuk memfilter desa berdasarkan kecamatan
   function filterDesaOptions(preselectId = null) {
+
+  console.log("filterdesa dijalankan");
 
   const selectedKecamatanId = $('#filter_kecamatan').val(); //i forgor why this needs .val()
   const desaSelect = $('#filter_desa');
@@ -66,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
   // Submit otomatis jika filter kecamatan diubah
-  $('#filter_kecamatan').on('change', function () {
+    $('#filter_kecamatan').on('change', function () {
     filterDesaOptions(); 
     $('#filterForm').submit();
   });
