@@ -1,8 +1,11 @@
 
 
 document.addEventListener('DOMContentLoaded', function () {
-  console.log('dropdown-form.js dimuat');
+  console.log('dropdown-form.js dimuat baru 3:00');
 
+  const currentPage = document.body.dataset.page;
+  const usedParam = (currentPage === 'destana') ? '?unused=true' : '';
+  
   const kecamatanSelect = document.getElementById('filter_kecamatan');
   const desaSelect = document.getElementById('filter_desa');
 
@@ -30,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
-    fetch(`${base_url}relawan/get_desa_by_kecamatan?kecamatan=${selectedKecamatanId}`)
+    fetch(base_url + `wilayah/get_desa_by_kecamatan/` + selectedKecamatanId +usedParam)
       .then(response => response.json())
       .then(data => {
         console.log('Data desa diterima:', data);

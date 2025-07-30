@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Ambil data desa
-  fetch(base_url + 'relawan/get_desa_by_kecamatan?kecamatan=' + selectedKecamatanId)
+  fetch(base_url + 'wilayah/get_desa_by_kecamatan/' + selectedKecamatanId)
     .then(response => response.json())
     .then(data => {
       desaSelect.append(new Option('-- Semua Desa --', 'all', false, preselectId === 'all')); // Tambahkan default

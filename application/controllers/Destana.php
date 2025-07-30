@@ -7,6 +7,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @property CI_Input $input
  * @property CI_DB_mysqli_driver $db
  */
+
 class Destana extends CI_Controller
 {
     public function __construct()
@@ -29,8 +30,8 @@ class Destana extends CI_Controller
     public function index()
     {
         $filter = [
-            'id_kecamatan'    => $this->input->get('id_kecamatan'),
-            'id_desa'         => $this->input->get('id_desa'),
+            'id_kecamatan'    => $this->input->get('kecamatan'),
+            'id_desa'         => $this->input->get('desa'),
             'tahun'           => $this->input->get('tahun'),
             'id_kelas'        => $this->input->get('id_kelas'),
             'id_sumber_dana'  => $this->input->get('id_sumber_dana'),
@@ -41,6 +42,8 @@ class Destana extends CI_Controller
         $data['destana'] = $this->Destana_model->get_all($filter);
         $data = array_merge($data, $this->Destana_model->get_master_lists());
 
+        $data['load_select2'] = true;
+        $data['scripts'] = ['dropdown-listfilter.js'];
         $this->load_template('destana_list', $data);
     }
 
@@ -53,6 +56,8 @@ class Destana extends CI_Controller
         $data = array_merge($data, $this->Destana_model->get_master_lists(true));
         $data['desa_list'] = [];
         
+        $data['load_select2'] = true;
+        $data['scripts'] = ['dropdown-form.js'];
         $this->load_template('destana_form', $data);
     }
 
@@ -88,6 +93,9 @@ class Destana extends CI_Controller
         $destana->jenis_bencana = $this->Destana_ancaman_model->get_ancaman_ids_by_destana($id);
         $data['destana'] = $destana;
         $data = array_merge($data, $this->Destana_model->get_master_lists_for_edit($destana->id_desa));
+        
+        $data['load_select2'] = true;
+        $data['scripts'] = ['dropdown-listfilter.js'];
         $this->load_template('destana_form', $data);
     }
 

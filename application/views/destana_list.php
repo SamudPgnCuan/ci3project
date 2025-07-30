@@ -17,38 +17,34 @@
 
       <!-- filter -->
       <div class="card-body">
-        
-        <form method="get" action="<?= site_url('destana'); ?>" class="p-3">
+        <form id="filterForm" method="get" action="<?= site_url('destana'); ?>" class="p-3">
           <div class="row">
 
             <div class="col-md-4">
-              <label>Kecamatan</label>
-              <select name="id_kecamatan" id="filter_kecamatan" class="form-control">
+              <label for="filter_kecamatan">Kecamatan</label>
+              <select name="kecamatan" id="filter_kecamatan" class="form-control select2" data-selected="<?= $this->input->get('kecamatan') ?>">
                 <option value="">-- Semua Kecamatan --</option>
-
-                <?php foreach ($kecamatan_list as $row): ?>
-                  <option value="<?= $row->id_kecamatan ?>" <?= set_select('id_kecamatan', $this->input->get('id_kecamatan'), $this->input->get('id_kecamatan') == $row->id_kecamatan) ?>>
-                    <?= $row->nama_kecamatan ?>
+                <?php foreach ($kecamatan_list as $k): ?>
+                  <option
+                   value="<?= $k->id_kecamatan ?>"
+                   <?= ($this->input->get('kecamatan') == $k->id_kecamatan ) ? 'selected' : '' ?>> 
+                   <?= $k->nama_kecamatan ?>
                   </option>
                 <?php endforeach; ?>
               </select>
             </div>
 
             <div class="col-md-4">
-              <label>Desa</label>
-              <select name="id_desa" id="filter_desa" class="form-control">
+              <label for="filter_desa">Desa</label>
+              <select name="desa" id="filter_desa" class="form-control select2" data-selected="<?= $this->input->get('desa') ?>">
                 <option value="">-- Semua Desa --</option>
-                <?php foreach ($desa_list as $row): ?>
-                  <option value="<?= $row->id_desa ?>" <?= set_select('id_desa', $this->input->get('id_desa'), $this->input->get('id_desa') == $row->id_desa) ?>>
-                    <?= $row->nama_desa ?>
-                  </option>
-                <?php endforeach; ?>
+                <!-- dari javascript? -->
               </select>
             </div>
 
             <div class="col-md-4">
               <label>Tahun Pembentukan</label>
-              <select name="tahun" class="form-control">
+              <select name="tahun" id="filter_tahun" class="form-control">
                 <option value="">-- Semua Tahun --</option>
                 <?php
                   $tahun_input = $this->input->get('tahun');
@@ -62,7 +58,7 @@
 
             <div class="col-md-4">
               <label>Kelas</label>
-              <select name="id_kelas" class="form-control">
+              <select name="id_kelas" id="filter_kelas" class="form-control">
                 <option value="">-- Semua Kelas --</option>
                 <?php foreach ($kelas_list as $row): ?>
                   <option value="<?= $row->id_kelas ?>" <?= set_select('id_kelas', $this->input->get('id_kelas'), $this->input->get('id_kelas') == $row->id_kelas) ?>>
@@ -74,7 +70,7 @@
 
             <div class="col-md-4">
               <label>Sumber Dana</label>
-              <select name="id_sumber_dana" class="form-control">
+              <select name="id_sumber_dana" id="filter_sumber" class="form-control">
                 <option value="">-- Semua Sumber Dana --</option>
                 <?php foreach ($sumber_dana_list as $row): ?>
                   <option value="<?= $row->id_sumber_dana ?>" <?= set_select('id_sumber_dana', $this->input->get('id_sumber_dana'), $this->input->get('id_sumber_dana') == $row->id_sumber_dana) ?>>
@@ -86,7 +82,7 @@
 
             <div class="col-md-4">
               <label>Jenis Ancaman</label>
-              <select name="id_ancaman" class="form-control">
+              <select name="id_ancaman" id="filter_ancaman" class="form-control">
                 <option value="">-- Semua Ancaman --</option>
                 <?php foreach ($ancaman_list as $row): ?>
                   <option value="<?= $row->id_ancaman ?>" <?= set_select('id_ancaman', $this->input->get('id_ancaman'), $this->input->get('id_ancaman') == $row->id_ancaman) ?>>
@@ -97,15 +93,14 @@
             </div>
 
             <div class="col-md-12 mt-3">
-              <button type="submit" class="btn btn-primary">Filter</button>
               <a href="<?= site_url('destana'); ?>" class="btn btn-secondary">Reset</a>
             </div>
+
           </div>
         </form>
       </div>
 
-      <!-- filter sampe sini ^ -->
-
+      <!-- Data Table -->
       <form method="post" action="<?= site_url('destana/delete_bulk') ?>">
         <table class="table table-bordered table-striped">
           <thead class="thead-dark">
@@ -154,14 +149,12 @@
           </button>
         </div>
       </form>
-
     </div>
 
   </div>
 </section>
 
 <script>
-  //bagian checkall
   const checkAll = document.getElementById('checkAll');
   const checkboxes = document.querySelectorAll('input[name="ids[]"]');
 
@@ -171,47 +164,11 @@
 
   checkboxes.forEach(cb => {
     cb.addEventListener('change', function () {
-      if (!this.checked) {
-        checkAll.checked = false;
-      } else {
-        const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-        checkAll.checked = allChecked;
-      }
+      if (!this.checked) checkAll.checked = false;
+      else checkAll.checked = Array.from(checkboxes).every(cb => cb.checked);
     });
   });
-  //^ bagian check all
 
-  //bagian filter
-  document.getElementById('filter_kecamatan').addEventListener('change', function () {
-    const id_kecamatan = this.value;
-    const desaDropdown = document.getElementById('filter_desa');
-
-    if (id_kecamatan) {
-      fetch("<?= site_url('destana/get_desa_by_kecamatan') ?>", {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `id_kecamatan=${encodeURIComponent(id_kecamatan)}`
-      })
-      .then(response => response.json())
-      .then(data => {
-        desaDropdown.innerHTML = '<option value="">-- Pilih Desa --</option>';
-        data.forEach(desa => {
-          desaDropdown.innerHTML += `<option value="${desa.id_desa}">${desa.nama_desa}</option>`;
-        });
-      })
-      .catch(err => {
-        console.error('Fetch Error:', err);
-        desaDropdown.innerHTML = '<option value="">-- Gagal memuat desa --</option>';
-      });
-    } else {
-
-      // Reset ke semua desa jika tidak ada kecamatan
-      desaDropdown.innerHTML = '<option value="">-- Semua Desa --</option>';
-      <?php foreach ($desa_list as $row): ?>
-        desaDropdown.innerHTML += '<option value="<?= $row->id_desa ?>"><?= $row->nama_desa ?></option>';
-      <?php endforeach; ?>
-    }
-  });
+  const base_url = '<?= base_url() ?>';
 </script>
+

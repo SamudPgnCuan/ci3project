@@ -42,6 +42,7 @@
 
   <section class="content">
     <div class="container-fluid">
+      
       <div class="card">
         <div class="card-header">
           <h3 class="card-title"><?= $judul_form ?></h3>
@@ -59,30 +60,25 @@
             <?php endif; ?>
 
             <div class="form-group">
-              <label for="id_kecamatan">Kecamatan</label>
-              <select name="id_kecamatan" id="id_kecamatan" class="form-control" required>
+              <label for="filter_kecamatan">Kecamatan</label>
+              <select name="id_kecamatan" class="form-control" id="filter_kecamatan" required>
                 <option value="">-- Pilih Kecamatan --</option>
-                <?php foreach ($kecamatan_list as $row): ?>
-                  <option value="<?= $row->id_kecamatan ?>" <?= ($row->id_kecamatan == $destana->id_kecamatan) ? 'selected' : '' ?>>
-                    <?= $row->nama_kecamatan ?>
+                <?php foreach ($kecamatan_list as $k): ?>
+                  <option 
+                  value="<?= $k->id_kecamatan ?>" 
+                  <?= $destana->id_kecamatan == $k->id_kecamatan  ? 'selected' : '' ?>>
+                  <?= $k->nama_kecamatan ?>
                   </option>
                 <?php endforeach; ?>
               </select>
             </div>
 
             <div class="form-group">
-              <label for="id_desa">Desa</label>
-              <select name="id_desa" id="id_desa" class="form-control" required <?= empty($desa_list) ? 'disabled' : '' ?>>
-                <?php if (empty($desa_list)): ?>
-                  <option value="">-- Pilih Kecamatan Dahulu --</option>
-                <?php else: ?>
-                  <option value="">-- Pilih Desa --</option>
-                  <?php foreach ($desa_list as $row): ?>
-                    <option value="<?= $row->id_desa ?>" <?= ($row->id_desa == $destana->id_desa) ? 'selected' : '' ?>>
-                      <?= $row->nama_desa ?>
-                    </option>
-                  <?php endforeach; ?>
-                <?php endif; ?>
+              <label for="filter_desa">Desa</label>
+              <select name="id_desa" id="filter_desa" class="form-control" required 
+              data-selected="<?= isset($destana->id_desa) ? $destana->id_desa : '' ?>">
+                <option value="">-- if you see this something went wrong --</option>
+                <!-- dari ajax lagi? -->
               </select>
             </div>
 
@@ -154,49 +150,7 @@
     </div>
   </section>
 
-  <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const selectedDesaId = "<?= $destana->id_desa ?>";
-
-    document.getElementById('id_kecamatan').addEventListener('change', function () {
-      const id_kecamatan = this.value;
-      const desaDropdown = document.getElementById('id_desa');
-
-      desaDropdown.innerHTML = '<option value="">Memuat data...</option>';
-      desaDropdown.disabled = true;
-
-      if (id_kecamatan) {
-        fetch("<?= site_url('destana/get_desa_by_kecamatan') ?>", {
-          method: "POST",
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: `id_kecamatan=${encodeURIComponent(id_kecamatan)}`
-        })
-        .then(response => response.json())
-        .then(data => {
-          desaDropdown.innerHTML = '';
-          desaDropdown.disabled = false;
-
-          if (data.length > 0) {
-            desaDropdown.innerHTML = '<option value="">-- Pilih Desa --</option>';
-            data.forEach(desa => {
-              const selected = desa.id_desa == selectedDesaId ? 'selected' : '';
-              desaDropdown.innerHTML += `<option value="${desa.id_desa}" ${selected}>${desa.nama_desa}</option>`;
-            });
-          } else {
-            desaDropdown.innerHTML = '<option value="">Tidak ada desa tersedia</option>';
-          }
-        })
-        .catch(err => {
-          console.error('Fetch Error:', err);
-          desaDropdown.innerHTML = '<option value="">Gagal memuat desa</option>';
-        });
-      } else {
-        desaDropdown.innerHTML = '<option value="">-- Pilih Kecamatan Dahulu --</option>';
-        desaDropdown.disabled = true;
-      }
-    });
-  });
-  </script>
+<script>
+  const base_url = "<?= base_url() ?>";
+</script>
 

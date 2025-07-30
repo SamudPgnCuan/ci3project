@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
-<body class="hold-transition layout-fixed sidebar-collapse"> <!--sidebar-collapse-->
+<body class="hold-transition layout-fixed sidebar-collapse" data-page="<?= $this->router->class ?>">
   <!--  sidebar-mini sidebar-no-expand| no expandnya gak work grrrrrrrrrrrr -->
 <div class="wrapper">
 
