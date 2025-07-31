@@ -96,7 +96,7 @@ class Destana extends CI_Controller
 
         
         $data['load_select2'] = true;
-        $data['scripts'] = ['dropdown-listfilter.js'];
+        $data['scripts'] = ['dropdown-form.js'];
         $this->load_template('destana_form', $data);
     }
 

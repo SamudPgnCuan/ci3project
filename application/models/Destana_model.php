@@ -47,8 +47,7 @@ class Destana_model extends CI_Model {
             )", null, false);
         }
 
-        // $this->db->order_by('mk.nama_kecamatan', 'asc');
-        // $this->db->order_by('md.nama_desa', 'asc');
+        $this->db->order_by('md.id_desa', 'asc');
 
         $query = $this->db->get();
         $result = $query->result_array();

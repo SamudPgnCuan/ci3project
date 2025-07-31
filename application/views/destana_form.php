@@ -1,9 +1,6 @@
   <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 
   <?php
-  if ($mode !== 'create' && $mode !== 'edit') {
-    show_error("Mode tidak valid: harus 'create' atau 'edit'", 500);
-  }
 
   if (!isset($destana)) {
     $destana = (object) [

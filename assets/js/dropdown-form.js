@@ -1,11 +1,7 @@
-
-
 document.addEventListener('DOMContentLoaded', function () {
-  console.log('dropdown-form.js dimuat baru 3:00');
+  console.log('dropdown-form.js dimuat baru 11 40');
 
   const currentPage = document.body.dataset.page;
-  const usedParam = (currentPage === 'destana') ? '?unused=true' : '';
-  
   const kecamatanSelect = document.getElementById('filter_kecamatan');
   const desaSelect = document.getElementById('filter_desa');
 
@@ -14,26 +10,32 @@ document.addEventListener('DOMContentLoaded', function () {
     return;
   }
 
-  // Ambil desa terpilih dari atribut data-selected
   const preselectedDesaId = desaSelect.dataset.selected || null;
 
-  // Fungsi untuk memuat desa berdasarkan kecamatan
+  let usedParam = '';
+  if (currentPage === 'destana') {
+    usedParam = '?unused=true';
+    if (preselectedDesaId) {
+      usedParam += `&aktif=${preselectedDesaId}`;
+    }
+  }
+
   function populateDesaOptions(preselectId = null) {
     console.log('populateDesaOptions() dipanggil');
 
     const selectedKecamatanId = kecamatanSelect.value;
 
-    desaSelect.innerHTML = ''; // kosongkan dulu
+    desaSelect.innerHTML = '';
     const defaultOption = new Option('-- Pilih Desa --', '');
     desaSelect.appendChild(defaultOption);
 
     if (!selectedKecamatanId) {
       console.warn('Belum ada kecamatan dipilih');
-      $(desaSelect).trigger('change.select2'); // Untuk sinkronisasi Select2
+      $(desaSelect).trigger('change.select2');
       return;
     }
 
-    fetch(base_url + `wilayah/get_desa_by_kecamatan/` + selectedKecamatanId +usedParam)
+    fetch(base_url + `wilayah/get_desa_by_kecamatan/` + selectedKecamatanId + usedParam)
       .then(response => response.json())
       .then(data => {
         console.log('Data desa diterima:', data);
@@ -43,7 +45,6 @@ document.addEventListener('DOMContentLoaded', function () {
           desaSelect.appendChild(option);
         });
 
-        // Trigger agar select2 refresh
         $(desaSelect).trigger('change.select2');
       })
       .catch(error => {
@@ -51,16 +52,13 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   }
 
-  // Jalankan saat pertama kali untuk preselect
   populateDesaOptions(preselectedDesaId);
 
-  // Jalankan ulang saat kecamatan berubah
   $(kecamatanSelect).on('change', function () {
     console.log('Kecamatan diubah, trigger populateDesaOptions()');
     populateDesaOptions();
   });
 
-  // Inisialisasi Select2 (pastikan ini setelah event binding)
   $(kecamatanSelect).select2({
     placeholder: 'Pilih Kecamatan',
     allowClear: true,

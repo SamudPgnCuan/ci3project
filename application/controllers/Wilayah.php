@@ -25,8 +25,9 @@ class Wilayah extends CI_Controller
         $kd_kec = $kecamatan->kode;
 
         if ($only_unused) {
+            $id_desa_aktif = $this->input->get('aktif');
             $this->load->model('Destana_model');
-            $desa = $this->Destana_model->get_desa_unused($kd_kec);
+            $desa = $this->Destana_model->get_desa_unused($kd_kec, $id_desa_aktif);
         } else {
             // Ambil semua desa berdasarkan kode kecamatan
             $this->db->where('kd_kec', $kd_kec);
