@@ -92,7 +92,8 @@ class Destana extends CI_Controller
         }
         $destana->jenis_bencana = $this->Destana_ancaman_model->get_ancaman_ids_by_destana($id);
         $data['destana'] = $destana;
-        $data = array_merge($data, $this->Destana_model->get_master_lists_for_edit($destana->id_desa));
+        $data = array_merge($data, $this->Destana_model->get_master_lists(true, $destana->id_desa));
+
         
         $data['load_select2'] = true;
         $data['scripts'] = ['dropdown-listfilter.js'];
@@ -138,26 +139,6 @@ class Destana extends CI_Controller
             }
         }
         redirect('destana');
-    }
-
-    public function get_desa_by_kecamatan()
-    {
-        $id_kecamatan = $this->input->post('id_kecamatan');
-        log_message('debug', 'ID KECAMATAN YANG DITERIMA: ' . $id_kecamatan);
-
-        $kecamatan = $this->db->get_where('master_kecamatan', ['id_kecamatan' => $id_kecamatan])->row();
-        if (!$kecamatan) {
-            log_message('debug', 'TIDAK DITEMUKAN KECAMATAN');
-            echo json_encode([]);
-            return;
-        }
-
-        $kd_kec = $kecamatan->kode;
-
-        $desa = $this->Destana_model->get_desa_yang_belum_dipakai($kd_kec);
-        log_message('debug', 'JUMLAH DESA DITEMUKAN: ' . count($desa));
-
-        echo json_encode($desa);
     }
 
 }
