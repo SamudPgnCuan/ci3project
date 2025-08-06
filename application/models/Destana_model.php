@@ -47,8 +47,7 @@ class Destana_model extends CI_Model {
             )", null, false);
         }
 
-        // $this->db->order_by('mk.nama_kecamatan', 'asc');
-        // $this->db->order_by('md.nama_desa', 'asc');
+        $this->db->order_by('md.id_desa', 'asc');
 
         $query = $this->db->get();
         $result = $query->result_array();
@@ -92,57 +91,52 @@ class Destana_model extends CI_Model {
         return $this->db->get($this->table)->row();
     }
 
-    public function get_master_lists($exclude_used_desa = false)
-    {
-        return [
-            'kecamatan_list'   => $this->db->get('master_kecamatan')->result(),
-            'desa_list'        => $exclude_used_desa ? $this->get_desa_yang_belum_dipakai() : $this->db->get('master_desa')->result(),
-            'kelas_list'       => $this->db->get('master_kelas')->result(),
-            'sumber_dana_list' => $this->db->get('master_sumber_dana')->result(),
-            'ancaman_list'     => $this->db->get('master_ancaman')->result()
-        ];
-    }
+    public function get_master_lists($exclude_used_desa = false, $id_desa_aktif = null)
+{
+    return [
+        'kecamatan_list'   => $this->db->get('master_kecamatan')->result(),
+        'desa_list'        => $exclude_used_desa ? 
+                              $this->get_desa_unused(null, $id_desa_aktif) 
+                            : $this->db->get('master_desa')->result(),
+        'kelas_list'       => $this->db->get('master_kelas')->result(),
+        'sumber_dana_list' => $this->db->get('master_sumber_dana')->result(),
+        'ancaman_list'     => $this->db->get('master_ancaman')->result()
+    ];
+}
 
 
-    public function get_desa_yang_belum_dipakai($kd_kec = null)
+    /**
+ * Ambil daftar desa yang belum digunakan di tabel destana.
+ * Jika `$id_desa_aktif` diset, maka desa tersebut tetap disertakan.
+ *
+ * @param string|null $kd_kec         Kode kecamatan untuk filter desa (opsional).
+ * @param int|null    $id_desa_aktif  ID desa yang sedang aktif digunakan (opsional).
+ * @return array                      Daftar desa yang tersedia.
+ */
+    public function get_desa_unused($kd_kec = null, $id_desa_aktif = null)
     {
         $this->db->select('md.*');
         $this->db->from('master_desa md');
-        $this->db->join('destana d', 'md.id_desa = d.id_desa', 'left');
-        $this->db->where('d.id_desa IS NULL');
+        $this->db->join('destana d', 'md.id_desa = d.id_desa', 'left'); //left join is kinda confusing :(
+        $this->db->where('d.id_desa IS NULL'); //isi semua d.* yang belum punya pasangan diisi null, lalu di ambil
+                                                //desa aktif sudah punya pasangan jadi tidak diambil
+
         if ($kd_kec !== null) {
             $this->db->where('md.kd_kec', $kd_kec);
         }
-        return $this->db->get()->result();
-    }
 
-
-    public function get_desa_yang_belum_dipakai_plus_aktif($id_desa_aktif)
-    {
-        $this->db->select('md.*');
-        $this->db->from('master_desa md');
-        $this->db->join('destana d', 'md.id_desa = d.id_desa AND md.id_desa != ' . (int)$id_desa_aktif, 'left');
-        $this->db->where('d.id_desa IS NULL');
-        
         $desa_baru = $this->db->get()->result();
-        $desa_aktif = $this->db
-            ->get_where('master_desa', ['id_desa' => $id_desa_aktif])
-            ->result();
 
-        return array_merge($desa_aktif, $desa_baru);
+        if ($id_desa_aktif !== null) {
+            $desa_aktif = $this->db
+                ->get_where('master_desa', ['id_desa' => $id_desa_aktif]) //desa aktif diambil di sini
+                ->result();
+            return array_merge($desa_aktif, $desa_baru);
+        }
+
+        return $desa_baru;
     }
 
-
-    public function get_master_lists_for_edit($id_desa_aktif)
-    {
-        return [
-            'kecamatan_list'   => $this->db->get('master_kecamatan')->result(),
-            'desa_list'        => $this->get_desa_yang_belum_dipakai_plus_aktif($id_desa_aktif),
-            'kelas_list'       => $this->db->get('master_kelas')->result(),
-            'sumber_dana_list' => $this->db->get('master_sumber_dana')->result(),
-            'ancaman_list'     => $this->db->get('master_ancaman')->result()
-        ];
-    }
 
 
 

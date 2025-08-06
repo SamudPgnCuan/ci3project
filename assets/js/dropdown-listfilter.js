@@ -2,6 +2,8 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
+
+
   const preselectedDesaId = $('#filter_desa').data('selected');
   filterDesaOptions(preselectedDesaId); 
 
@@ -19,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Inisialisasi Select2 untuk filter desa
   $('#filter_desa').select2({
-    placeholder: 'Pilih Desa',
+    placeholder: 'pilih kecamatan dulu? :3',
     allowClear: true,
     width: '100%',
     dropdownParent: $('#filter_desa').parent()
@@ -32,22 +34,24 @@ document.addEventListener('DOMContentLoaded', function () {
    // Fungsi untuk memfilter desa berdasarkan kecamatan
   function filterDesaOptions(preselectId = null) {
 
-  const selectedKecamatanId = $('#filter_kecamatan').val(); // ID numerik
+  console.log("filterdesa dijalankan");
+
+  const selectedKecamatanId = $('#filter_kecamatan').val(); //i forgor why this needs .val()
   const desaSelect = $('#filter_desa');
 
   desaSelect.empty(); // Hapus semua opsi sebelumnya
 
   if (!selectedKecamatanId) {
-    desaSelect.append(new Option('-- Semua Desa --', '', true, true)); // selected & default
+    //desaSelect.append(new Option('-- pilih kecamatan dulu --')); 
     desaSelect.trigger('change.select2'); // Paksa refresh
     return;
   }
 
   // Ambil data desa
-  fetch(base_url + 'relawan/get_desa_by_kecamatan?kecamatan=' + selectedKecamatanId)
+  fetch(base_url + 'wilayah/get_desa_by_kecamatan/' + selectedKecamatanId)
     .then(response => response.json())
     .then(data => {
-      desaSelect.append(new Option('-- Semua Desa --', '', false, preselectId === null)); // Tambahkan default
+      desaSelect.append(new Option('-- Semua Desa --', 'all', false, preselectId === 'all')); // Tambahkan default
 
       data.forEach(desa => {
         const isSelected = desa.id_desa == preselectId;
@@ -66,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
   // Submit otomatis jika filter kecamatan diubah
-  $('#filter_kecamatan').on('change', function () {
+    $('#filter_kecamatan').on('change', function () {
     filterDesaOptions(); 
     $('#filterForm').submit();
   });

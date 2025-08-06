@@ -2,9 +2,12 @@
   $segment1 = $this->uri->segment(1); 
 ?>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
+  
   <a href="<?= site_url() ?>" class="brand-link">
-    <span class="brand-text font-weight-light">samudmin</span>
+    <i class="brand-image fa fa-bug" style="font-size: 2rem;"></i>
+    <span class="brand-text ml-1">Samudmin</span>
   </a>
+
 
   <div class="sidebar">
     <nav class="mt-2">
@@ -26,7 +29,7 @@
 
         <li class="nav-item">
           <a href="<?= site_url('relawan') ?>" class="nav-link <?= $segment1 == 'relawan' ? 'active' : '' ?>">
-            <i class="nav-icon fas fa-people-carry"></i>
+            <i class="nav-icon fas fa-people-carry"></i>  
             <p>Data Relawan</p>
           </a>
         </li>

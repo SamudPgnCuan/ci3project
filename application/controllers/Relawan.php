@@ -35,8 +35,7 @@ class Relawan extends CI_Controller
         $data = array_merge($data, $this->Relawan_model->get_master_lists());
 
         $data['load_select2'] = true;
-        $data['custom_script'] = 'relawan.js';
-        
+        $data['scripts'] = ['dropdown-listfilter.js'];
         $this->load_template('relawan_list', $data);
     }
 
@@ -45,7 +44,11 @@ class Relawan extends CI_Controller
     {
         $data['mode'] = 'create';
         $data['relawan'] = null;
+
         $data = array_merge($data, $this->Relawan_model->get_master_lists());
+
+        $data['load_select2'] = true;
+        $data['scripts'] = ['dropdown-form.js'];
         $this->load_template('relawan_form', $data);
     }
 
@@ -64,7 +67,11 @@ class Relawan extends CI_Controller
             show_error("Data dengan ID $id tidak ditemukan", 404);
         }
         $data['relawan'] = $relawan;
+
         $data = array_merge($data, $this->Relawan_model->get_master_lists());
+        
+        $data['load_select2'] = true;
+        $data['scripts'] = ['dropdown-form.js'];
         $this->load_template('relawan_form', $data);
     }
 
@@ -90,38 +97,6 @@ class Relawan extends CI_Controller
             }
         }
         redirect('relawan');
-    }
-
-    public function get_desa_by_kecamatan()
-    {
-        header('Content-Type: application/json');
-
-        $id_kecamatan = $this->input->get('kecamatan'); 
-
-        // Debug: log input
-        log_message('debug', 'ID Kecamatan: ' . $id_kecamatan);
-        
-        // Ambil kode dari master_kecamatan berdasarkan ID
-        $kecamatan = $this->db->get_where('master_kecamatan', ['id_kecamatan' => $id_kecamatan])->row();
-
-        if (!$kecamatan) {
-            log_message('debug', 'Kecamatan tidak ditemukan untuk ID: ' . $id_kecamatan);
-            echo json_encode([]); // Jika tidak ketemu, kirim data kosong
-            return;
-        }
-
-        log_message('debug', 'Kode Kecamatan: ' . $kecamatan->kode);
-
-        // Ambil semua desa dengan kd_kec yang sesuai dengan kode dari kecamatan
-        $desa = $this->db
-                    ->select('id_desa, nama_desa')
-                    ->where('kd_kec', $kecamatan->kode)
-                    ->get('master_desa')
-                    ->result();
-
-        log_message('debug', 'Jumlah desa ditemukan: ' . count($desa));
-
-        echo json_encode($desa);
     }
 
 

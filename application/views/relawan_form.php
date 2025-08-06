@@ -106,27 +106,27 @@ switch ($mode) {
                    value="<?= $relawan->komunitas ?>" required>
           </div>
 
+          <!-- youre probably looking for this one -->
           <div class="form-group">
-            <label for="id_kecamatan">Kecamatan</label>
-            <select name="id_kecamatan" class="form-control" id="id_kecamatan" required>
+            <label for="filter_kecamatan">Kecamatan</label>
+            <select name="id_kecamatan" class="form-control" id="filter_kecamatan" required>
               <option value="">-- Pilih Kecamatan --</option>
               <?php foreach ($kecamatan_list as $k): ?>
-                <option value="<?= $k->id_kecamatan ?>" <?= $relawan->id_kecamatan == $k->id_kecamatan ? 'selected' : '' ?>>
-                  <?= $k->nama_kecamatan ?>
+                <option 
+                value="<?= $k->id_kecamatan ?>" 
+                <?= $relawan->id_kecamatan == $k->id_kecamatan ? 'selected' : '' ?>>
+                <?= $k->nama_kecamatan ?>
                 </option>
               <?php endforeach; ?>
             </select>
           </div>
 
           <div class="form-group">
-            <label for="id_desa">Desa</label>
-            <select name="id_desa" class="form-control" id="id_desa" required>
-              <option value="">-- Pilih Desa --</option>
-              <?php foreach ($desa_list as $d): ?>
-                <option value="<?= $d->id_desa ?>" <?= $relawan->id_desa == $d->id_desa ? 'selected' : '' ?>>
-                  <?= $d->nama_desa ?>
-                </option>
-              <?php endforeach; ?>
+            <label for="filter_desa">Desa</label>
+            <select name="id_desa" id="filter_desa" class="form-control" required 
+            data-selected="<?= isset($relawan->id_desa) ? $relawan->id_desa : '' ?>">
+              <option value="">-- if you see this something went wrong --</option>
+              <!-- dari ajax lagi? -->
             </select>
           </div>
 
@@ -153,3 +153,7 @@ switch ($mode) {
     </div>
   </div>
 </section>
+
+<script>
+  const base_url = "<?= base_url() ?>";
+</script>
