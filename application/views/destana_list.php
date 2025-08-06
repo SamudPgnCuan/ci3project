@@ -101,54 +101,41 @@
       </div>
 
       <!-- Data Table -->
-      <form method="post" action="<?= site_url('destana/delete_bulk') ?>">
-        <table class="table table-bordered table-striped">
-          <thead class="thead-dark">
-            <tr>
-              <th class="text-center align-middle p-0" style="width: 50px;">
-                <input type="checkbox" id="checkAll" style="transform: scale(1.2);">
-              </th>
-              <th>Kecamatan</th>
-              <th>Desa</th>
-              <th>Tahun Pembentukan</th>
-              <th>Kelas</th>
-              <th>Sumber Dana</th>
-              <th>Jenis Bencana</th>
-              <th style="width: 80px;">Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            <?php if (!empty($destana)): ?>
-              <?php foreach ($destana as $d): ?>
-                <tr>
-                  <td class="text-center align-middle p-0">
-                    <input type="checkbox" name="ids[]" value="<?= $d['id'] ?>" style="transform: scale(1.2);">
-                  </td>
-                  <td><?= $d['nama_kecamatan'] ?></td>
-                  <td><?= $d['nama_desa'] ?></td>
-                  <td><?= $d['tahun_pembentukan'] ?></td>
-                  <td><?= $d['nama_kelas'] ?></td>
-                  <td><?= $d['nama_sumber_dana'] ?></td>
-                  <td>
-                    <?= !empty($d['ancaman']) ? implode('<br>', $d['ancaman']) : '-' ?>
-                  </td>
-                  <td class="text-center">
-                    <a href="<?= site_url('destana/edit/' . $d['id']) ?>" class="btn btn-warning btn-sm">Edit</a>
-                  </td>
-                </tr>
-              <?php endforeach; ?>
-            <?php else: ?>
-              <tr><td colspan="8" class="text-center">Tidak ada data.</td></tr>
-            <?php endif; ?>
-          </tbody>
-        </table>
-
-        <div class="card-footer d-flex justify-content-between">
-          <button type="submit" class="btn btn-danger" onclick="return confirm('Hapus data yang dipilih?')">
-            <i class="fas fa-trash-alt"></i> Hapus (centang data terlebih dahulu)
-          </button>
-        </div>
-      </form>
+      <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+          <tr>
+            <th>Kecamatan</th>
+            <th>Desa</th>
+            <th>Tahun Pembentukan</th>
+            <th>Kelas</th>
+            <th>Sumber Dana</th>
+            <th>Jenis Bencana</th>
+            <th style="width: 120px;">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php if (!empty($destana)): ?>
+            <?php foreach ($destana as $d): ?>
+              <tr>
+                <td><?= $d['nama_kecamatan'] ?></td>
+                <td><?= $d['nama_desa'] ?></td>
+                <td><?= $d['tahun_pembentukan'] ?></td>
+                <td><?= $d['nama_kelas'] ?></td>
+                <td><?= $d['nama_sumber_dana'] ?></td>
+                <td>
+                  <?= !empty($d['ancaman']) ? implode('<br>', $d['ancaman']) : '-' ?>
+                </td>
+                <td class="text-center">
+                  <a href="<?= site_url('destana/edit/' . $d['id']) ?>" class="btn btn-warning btn-sm">Edit</a>
+                  <a href="<?= site_url('destana/delete/' . $d['id']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus data ini?')">Delete</a>
+                </td>
+              </tr>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <tr><td colspan="7" class="text-center">Tidak ada data.</td></tr>
+          <?php endif; ?>
+        </tbody>
+      </table>
     </div>
 
   </div>

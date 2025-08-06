@@ -129,16 +129,4 @@ class Destana extends CI_Controller
         redirect('destana');
     }
 
-    public function delete_bulk()
-    {
-        $selected = $this->input->post('ids');
-        if (!empty($selected)) {
-            foreach ($selected as $id) {
-                $this->db->where('id_destana', $id)->delete('destana_ancaman');
-                $this->Destana_model->delete(['id' => $id]);
-            }
-        }
-        redirect('destana');
-    }
-
 }

@@ -117,22 +117,26 @@ class Destana_model extends CI_Model {
     {
         $this->db->select('md.*');
         $this->db->from('master_desa md');
-        $this->db->join('destana d', 'md.id_desa = d.id_desa AND md.id_desa != ' . (int)$id_desa_aktif, 'left', false);
-        $this->db->where('d.id_desa IS NULL');
+        $this->db->join('destana d', 'md.id_desa = d.id_desa', 'left'); //left join is kinda confusing :(
+        $this->db->where('d.id_desa IS NULL'); //isi semua d.* yang belum punya pasangan diisi null, lalu di ambil
+                                                //desa aktif sudah punya pasangan jadi tidak diambil
+
         if ($kd_kec !== null) {
             $this->db->where('md.kd_kec', $kd_kec);
         }
+
         $desa_baru = $this->db->get()->result();
 
         if ($id_desa_aktif !== null) {
             $desa_aktif = $this->db
-                ->get_where('master_desa', ['id_desa' => $id_desa_aktif])
+                ->get_where('master_desa', ['id_desa' => $id_desa_aktif]) //desa aktif diambil di sini
                 ->result();
             return array_merge($desa_aktif, $desa_baru);
         }
 
         return $desa_baru;
     }
+
 
 
 
