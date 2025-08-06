@@ -142,20 +142,7 @@
 </section>
 
 <script>
-  const checkAll = document.getElementById('checkAll');
-  const checkboxes = document.querySelectorAll('input[name="ids[]"]');
-
-  checkAll.addEventListener('change', function () {
-    checkboxes.forEach(cb => cb.checked = this.checked);
-  });
-
-  checkboxes.forEach(cb => {
-    cb.addEventListener('change', function () {
-      if (!this.checked) checkAll.checked = false;
-      else checkAll.checked = Array.from(checkboxes).every(cb => cb.checked);
-    });
-  });
-
   const base_url = '<?= base_url() ?>';
 </script>
+
 
