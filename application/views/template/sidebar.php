@@ -3,7 +3,7 @@
 ?>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
   
-  <a href="<?= site_url() ?>" class="brand-link">
+  <a href="<?= site_url('brand') ?>" class="brand-link">
     <i class="brand-image fa fa-bug" style="font-size: 2rem;"></i>
     <span class="brand-text ml-1">Samudmin</span>
   </a>
