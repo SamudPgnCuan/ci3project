@@ -9,6 +9,8 @@ class User extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
+        check_login();
+        check_admin();
         $this->load->model('User_model');
         $this->load->library('form_validation');
         $this->load->helper(['url', 'form']);
@@ -60,13 +62,4 @@ class User extends CI_Controller {
         redirect('user');
     }
 
-    public function delete_bulk() {
-        $usernames = $this->input->post('usernames');
-        if (!empty($usernames)) {
-            foreach ($usernames as $username) {
-                $this->User_model->delete($username);
-            }
-        }
-        redirect('user');
-    }
 }

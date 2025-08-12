@@ -13,6 +13,7 @@ class Destana extends CI_Controller
     public function __construct()
     {
         parent::__construct();
+        check_login();
         $this->load->model('Destana_model');
         $this->load->model('Destana_ancaman_model');
         $this->load->library('form_validation');

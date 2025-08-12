@@ -21,13 +21,6 @@
         </li>
 
         <li class="nav-item">
-          <a href="<?= site_url('user') ?>" class="nav-link <?= $segment1 == 'user' ? 'active' : '' ?>">
-            <i class="nav-icon fas fa-user"></i>
-            <p>Data User</p>
-          </a>
-        </li>
-
-        <li class="nav-item">
           <a href="<?= site_url('relawan') ?>" class="nav-link <?= $segment1 == 'relawan' ? 'active' : '' ?>">
             <i class="nav-icon fas fa-people-carry"></i>  
             <p>Data Relawan</p>
@@ -40,6 +33,15 @@
             <p>Data Destana</p>
           </a>
         </li>
+
+        <?php if ($this->session->userdata('role') === 'admin'): ?>
+        <li class="nav-item">
+          <a href="<?= site_url('user') ?>" class="nav-link <?= $segment1 == 'user' ? 'active' : '' ?>">
+            <i class="nav-icon fas fa-user"></i>
+            <p>Data User</p>
+          </a>
+        </li>
+        <?php endif; ?>
 
       </ul>
     </nav>

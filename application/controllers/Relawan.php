@@ -12,6 +12,7 @@ class Relawan extends CI_Controller
     public function __construct()
     {
         parent::__construct();
+        check_login();
         $this->load->model('Relawan_model');
         $this->load->library('form_validation');
         $this->load->helper(['url', 'form']);

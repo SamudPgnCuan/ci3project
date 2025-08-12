@@ -8,6 +8,7 @@
   <div class="container-fluid">
 
     <div class="card">
+
       <div class="card-header">
         <a href="<?= site_url('relawan/create') ?>" class="btn btn-primary">Tambah Relawan</a>
         <div class="card-tools">
@@ -43,7 +44,6 @@
               </select>
             </div>
           
-          </div>
             <div class="col-md-12 mt-3">
               <a href="<?= site_url('relawan') ?>" class="btn btn-secondary">Reset</a>
             </div>
@@ -55,11 +55,10 @@
       <!-- filter sampai sini ^ ? -->
 
       <!-- bawah mundur -->
-      <div class="card-body table-responsive p-0">
+      <div class="card-body table-responsive">
         <table class="table table-bordered table-striped">
           <thead class="thead-dark">
             <tr>
-              </th>
               <th>No</th>
               <th>Nama</th>
               <th>Komunitas</th>
