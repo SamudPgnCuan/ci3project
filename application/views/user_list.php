@@ -7,6 +7,30 @@
 <section class="content">
   <div class="container-fluid">
 
+    <!-- Flash message -->
+    <?php if ($msg = $this->session->flashdata('success')): ?>
+      <div id="flash-message" class="alert alert-success alert-dismissible fade show" role="alert">
+        <?= $msg ?>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <script>
+        // Hilangkan flash message setelah 3 detik
+        setTimeout(function() {
+          const flash = document.getElementById('flash-message');
+          if (flash) {
+            // Tambahkan fade out class
+            flash.classList.remove('show');
+            flash.classList.add('fade');
+            // Hapus dari DOM setelah animasi fade selesai (0.5s)
+            setTimeout(() => flash.remove(), 500);
+          }
+        }, 3000);
+      </script>
+    <?php endif; ?>
+
     <div class="card">
       
       <div class="card-header">
@@ -22,7 +46,6 @@
             <tr>
               <th>Username</th>
               <th>Nama</th>
-              <th style="width: 240px;">Password</th>
               <th>Role</th>
               <th style="width: 140px;">Aksi</th>
             </tr>
@@ -33,22 +56,18 @@
                 <tr>
                   <td><?= $user->username ?></td>
                   <td><?= $user->nama ?></td>
-                  <td style="max-width: 120px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="togglePassword('<?= $user->username ?>')">
-                      <i class="fa fa-eye"></i>
-                    </button>
-                    <span class="masked-password" id="masked_<?= $user->username ?>">••••••••</span>
-                    <span class="real-password d-none" id="real_<?= $user->username ?>"><?= $user->password ?></span>
-                  </td>
                   <td><?= $user->role ?></td>
-                  <td class="text-center">
-                    <a href="<?= site_url('user/edit/' . $user->username) ?>" class="btn btn-warning btn-sm">Edit</a>
-                    <a href="<?= site_url('user/delete/' . $user->username) ?>"
-                       class="btn btn-danger btn-sm"
-                       onclick="return confirm('Yakin ingin menghapus user <?= $user->username ?>?')">
-                       Delete
+                    <td class="text-center">
+                    <a href="<?= site_url('user/edit/' . $user->username) ?>" 
+                      class="btn btn-sm btn-warning mr-2">
+                      edit
                     </a>
-                  </td>
+                    <a href="<?= site_url('user/delete/' . $user->username) ?>"
+                       class="btn btn-sm btn-danger"
+                       onclick="return confirm('Yakin ingin menghapus user <?= $user->username ?>?')">
+                       Hapus
+                    </a>
+                    </td>
                 </tr>
               <?php endforeach; ?>
             <?php else: ?>

@@ -33,4 +33,10 @@ class User_model extends CI_Model {
         $query = $this->db->get($this->table); 
         return $query->row();
     }
+
+    public function reset_password($username, $new_password)
+    {
+        return $this->db->update('users', ['password' => $new_password], ['username' => $username]);
+    }
+
 }
