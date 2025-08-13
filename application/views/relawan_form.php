@@ -13,7 +13,7 @@ if (!isset($relawan)) {
     'jenis_kelamin' => '',
     'tempat_lahir' => '',
     'tanggal_lahir' => '',
-    'nama_organisasi' => '',
+    'id_organisasi' => '',
     'id_kecamatan' => '',
     'id_desa' => '',
     'pekerjaan' => '',
@@ -101,10 +101,18 @@ switch ($mode) {
           </div>
 
           <div class="form-group">
-            <label for="nama_organisasi">nama_organisasi</label>
-            <input type="text" class="form-control" name="nama_organisasi" id="nama_organisasi"
-                   value="<?= $relawan->nama_organisasi ?>" required>
+            <label for="id_organisasi">Organisasi</label>
+            <select name="id_organisasi" id="id_organisasi" class="form-control" required>
+              <option value="">-- Pilih Organisasi --</option>
+              <?php foreach ($organisasi_list as $o): ?>
+                <option value="<?= $o->id_organisasi ?>"
+                  <?= $relawan->id_organisasi == $o->id_organisasi ? 'selected' : '' ?>>
+                  <?= $o->nama_organisasi ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
           </div>
+
 
           <!-- youre probably looking for this one -->
           <div class="form-group">
