@@ -45,7 +45,7 @@ class Auth extends CI_Controller {
     public function profile()
     {
         if (!$this->session->userdata('logged_in')) {
-            redirect('user/login_form');
+            redirect('login_form');
         }
 
         $data['username'] = $this->session->userdata('username');
@@ -57,16 +57,3 @@ class Auth extends CI_Controller {
 }
 
     
-
-    // public function profile()
-    // {
-    //     if (!$this->session->userdata('logged_in')) {
-    //         redirect('user/login_form');
-    //     }
-
-    //     $data['username'] = $this->session->userdata('username');
-    //     $data['nama'] = $this->session->userdata('nama');
-    //     $data['role'] = $this->session->userdata('role');
-
-    //     $this->load->view('profile', $data);
-    // }

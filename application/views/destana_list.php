@@ -94,7 +94,7 @@
             </div>
 
             <div class="col-md-12 mt-3">
-              <a href="<?= site_url('destana'); ?>" class="btn btn-secondary">Reset</a>
+              <a href="<?= site_url('destana'); ?>" class="btn btn-secondary">Reset Filter</a>
             </div>
 
           </div>

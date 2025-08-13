@@ -27,6 +27,12 @@
                 <div class="card-body">
                     <h4 class="text-center mb-4">Login</h4>
 
+                    <div class="text-center mb-4">
+                        <img src="<?= base_url('assets/img/logo_destana.jpg') ?>" 
+                            alt="Logo Kominfo" 
+                            style="max-width: 120px; height: auto;">
+                    </div>
+
                     <?php if ($this->session->flashdata('error')): ?>
                         <div class="alert alert-danger">
                             <?= $this->session->flashdata('error'); ?>

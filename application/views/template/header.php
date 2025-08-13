@@ -54,7 +54,7 @@
             <small><?= ucfirst($this->session->userdata('role') ?? 'Tidak Ada Role') ?></small>
           </p>
           <div class="dropdown-divider"></div>
-          <a href="<?= site_url('auth/profile') ?>" class="dropdown-item">
+          <a href="<?= site_url('profile') ?>" class="dropdown-item">
             <i class="fas fa-id-card"></i> Profil Saya
           </a>
           <div class="dropdown-divider"></div> <!-- pemisah -->

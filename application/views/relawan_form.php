@@ -13,7 +13,7 @@ if (!isset($relawan)) {
     'jenis_kelamin' => '',
     'tempat_lahir' => '',
     'tanggal_lahir' => '',
-    'komunitas' => '',
+    'nama_organisasi' => '',
     'id_kecamatan' => '',
     'id_desa' => '',
     'pekerjaan' => '',
@@ -101,9 +101,9 @@ switch ($mode) {
           </div>
 
           <div class="form-group">
-            <label for="komunitas">Komunitas</label>
-            <input type="text" class="form-control" name="komunitas" id="komunitas"
-                   value="<?= $relawan->komunitas ?>" required>
+            <label for="nama_organisasi">nama_organisasi</label>
+            <input type="text" class="form-control" name="nama_organisasi" id="nama_organisasi"
+                   value="<?= $relawan->nama_organisasi ?>" required>
           </div>
 
           <!-- youre probably looking for this one -->

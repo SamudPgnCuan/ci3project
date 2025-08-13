@@ -40,12 +40,25 @@
               <label for="filter_desa">Desa</label>
               <select name="desa" id="filter_desa" class="form-control" data-selected="<?= $this->input->get('desa') ?>">
                 <option value="">-- if you see this on web something probably broke --</option>
-                <!-- dari javascript i think -->
+                <!-- dari javascript :3 -->
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label for="filter_organisasi">Organisasi</label>
+              <select name="organisasi" id="filter_organisasi" class="form-control">
+                <option value="">-- Semua Organisasi --</option>
+                <?php foreach ($organisasi_list as $o): ?>
+                  <option value="<?= $o->id_organisasi ?>"
+                    <?= ($this->input->get('organisasi') == $o->id_organisasi) ? 'selected' : '' ?>>
+                    <?= $o->nama_organisasi ?>
+                  </option>
+                <?php endforeach; ?>
               </select>
             </div>
           
             <div class="col-md-12 mt-3">
-              <a href="<?= site_url('relawan') ?>" class="btn btn-secondary">Reset</a>
+              <a href="<?= site_url('relawan') ?>" class="btn btn-secondary">Reset Filter</a>
             </div>
 
           </div>
@@ -61,7 +74,7 @@
             <tr>
               <th>No</th>
               <th>Nama</th>
-              <th>Komunitas</th>
+              <th>Organisasi</th>
               <th>Kecamatan</th>
               <th>Desa</th>
               <th>Aksi</th>
@@ -73,7 +86,7 @@
                 <tr>
                   <td><?= $no++ ?></td>
                   <td><?= $r->nama ?></td>
-                  <td><?= $r->komunitas ?></td>
+                  <td><?= $r->nama_organisasi ?></td>
                   <td><?= $r->nama_kecamatan ?></td>
                   <td><?= $r->nama_desa ?></td>
                   <td style="width: 220px;">
@@ -104,7 +117,7 @@
                           <li class="list-group-item"><strong>Jenis Kelamin:</strong> <?= $r->jenis_kelamin ?></li>
                           <li class="list-group-item"><strong>Tempat Lahir:</strong> <?= $r->tempat_lahir ?></li>
                           <li class="list-group-item"><strong>Tanggal Lahir:</strong> <?= $r->tanggal_lahir ?></li>
-                          <li class="list-group-item"><strong>Komunitas:</strong> <?= $r->komunitas ?></li>
+                          <li class="list-group-item"><strong>Organisasi:</strong> <?= $r->nama_organisasi ?></li>
                           <li class="list-group-item"><strong>Kecamatan:</strong> <?= $r->nama_kecamatan ?></li>
                           <li class="list-group-item"><strong>Desa:</strong> <?= $r->nama_desa ?></li>
                           <li class="list-group-item"><strong>Pekerjaan:</strong> <?= $r->pekerjaan ?></li>

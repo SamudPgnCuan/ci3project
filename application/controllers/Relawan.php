@@ -30,9 +30,10 @@ class Relawan extends CI_Controller
     {
         $id_kecamatan = $this->input->get('kecamatan');
         $id_desa = $this->input->get('desa');
+        $id_organisasi = $this->input->get('organisasi');
 
         $data['mode']    = 'list';
-        $data['relawan'] = $this->Relawan_model->get_all($id_kecamatan, $id_desa);
+        $data['relawan'] = $this->Relawan_model->get_all($id_kecamatan, $id_desa, $id_organisasi);
         $data = array_merge($data, $this->Relawan_model->get_master_lists());
 
         $data['load_select2'] = true;

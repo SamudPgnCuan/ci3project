@@ -29,9 +29,14 @@
 <!-- custom script -->
 <?php if (!empty($scripts)): ?>
   <?php foreach ($scripts as $script) : ?>
-    <script src="<?= base_url('assets/js/' . $script) ?>"></script>
+    <?php //Auto Buster biar gak cache pake js lama
+      $filePath = FCPATH . 'assets/js/' . $script; // path fisik di server  
+      $version  = file_exists($filePath) ? filemtime($filePath) : time(); //versi dari waktu modifikasi file
+    ?>                                                                    
+    <script src="<?= base_url('assets/js/' . $script) ?>?v=<?= $version ?>"></script>
   <?php endforeach; ?>
 <?php endif; ?>
+
 
 </body>
 </html>
