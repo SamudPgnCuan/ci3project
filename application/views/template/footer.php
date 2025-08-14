@@ -2,9 +2,9 @@
 
 <!-- Main Footer -->
 <footer class="main-footer text-sm">
-  <strong>&copy; <?= date('Y'); ?> • My App</strong>
+  <strong>&copy; <?= date('Y'); ?> • Pemerintah Kabupaten Kebumen.</strong>
   <div class="float-right d-none d-sm-inline">
-    Powered by CI3 & AdminLTE
+    BPBD Kebumen x SiTana?DesTana?
   </div>
 </footer>
 
