@@ -5,7 +5,7 @@
   
   <a href="<?= site_url('brand') ?>" class="brand-link">
     <i class="brand-image fa fa-bug" style="font-size: 2rem;"></i>
-    <span class="brand-text ml-1">Samudmin</span>
+    <span class="brand-text ml-1">Menu Destana</span>
   </a>
 
 

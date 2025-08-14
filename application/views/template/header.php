@@ -31,7 +31,12 @@
           <i class="fas fa-bars"></i>
         </a>
       </li>
-      <span class="navbar-text ml-2">ini cara makenya gimana ya</span>
+      <li class="nav-item d-flex align-items-center ml-2">
+        <img src="<?= base_url('assets/img/logo_kebumen.png') ?>" alt="Logo Kebumen" style="height: 40px;">
+        <i class="fas fa-times mx-2" aria-hidden="true"></i>
+        <img src="<?= base_url('assets/img/logo_destana.png') ?>" alt="Logo Destana" style="height: 40px;">
+        <span class="ml-2">Destana Kebumen</span>
+      </li>
     </ul>
 
     <!-- Right navbar links -->

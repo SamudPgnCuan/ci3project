@@ -17,7 +17,7 @@
       align-items: center;
     }
     .login-card {
-      max-width: 650px;
+      max-width: 660px;
       width: 100%;
 			min-height: 420px;
       border-radius: 10px;
@@ -33,21 +33,18 @@
       align-items: center;
       padding: 2rem;
     }
-
-    .form-side {
-      background-color: white;
-      padding: 2rem;
-    }
-		.logo-container {
-			display: flex;
+		.brand-side img {
+			max-width: 120px; /* Supaya tinggi seragam */
+			object-fit: contain; /* Biar proporsi terjaga */
 			align-items: center; /* Vertikal rata tengah */
 			gap: 15px; /* Jarak antar logo */
 			margin-bottom: 1.5rem;
 		}
-		.logo-container img {
-			max-height: 80px; /* Supaya tinggi seragam */
-			object-fit: contain; /* Biar proporsi terjaga */
-		}
+    .form-side {
+      background-color: white;
+      padding: 2rem;
+    }
+		
   </style>
 </head>
 
@@ -55,11 +52,8 @@
 <div class="login-card d-flex">
   <!-- Kiri: Brand -->
   <div class="brand-side col-md-6">
-    <div class="logo-container">
-			<img src="<?= base_url('assets/img/logo_kebumen.png') ?>" alt="Logo Kebumen">
-			<img src="<?= base_url('assets/img/logo_destana.png') ?>" alt="Logo Destana">
-		</div>
-    <h3>Destana Kebumen</h3>
+		<img src="<?= base_url('assets/img/bpbd_kebumen.png') ?>" alt="Logo BPBD Kebumen">
+    <h2>Destana Kebumen</h2>
     <!--  <p>Deskripsi singkat</p>  -->
   </div>
 
