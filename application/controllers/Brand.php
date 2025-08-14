@@ -1,10 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-/**
- * @property CI_Input $input
- * @property CI_DB_mysqli_driver $db
- */
+
 
 class Brand extends CI_Controller {
 

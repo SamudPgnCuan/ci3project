@@ -1,6 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+const DEFAULT_USER_PASSWORD = 'destana25';
+
 /**
  * @property User_model $User_model
  * @property CI_Input $input
@@ -9,6 +11,8 @@ class User extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
+        check_login();
+        check_admin();
         $this->load->model('User_model');
         $this->load->library('form_validation');
         $this->load->helper(['url', 'form']);
@@ -32,9 +36,13 @@ class User extends CI_Controller {
         $this->load_template('user_form', $data);
     }
 
-    public function store() {
+    public function store()
+    {
         $data = $this->input->post();
+        // Set default password
+        $data['password'] = DEFAULT_USER_PASSWORD; // sementara plaintext
         $this->User_model->insert($data);
+        $this->session->set_flashdata('success', 'User berhasil ditambahkan. Password default: ' . DEFAULT_USER_PASSWORD);
         redirect('user');
     }
 
@@ -55,18 +63,27 @@ class User extends CI_Controller {
         redirect('user');
     }
 
-    public function delete($username) {
+    public function delete($username) 
+    {
+        if ($this->session->userdata('role') !== 'admin') {
+            show_error('Anda tidak memiliki akses.', 403);
+        }
+        
         $this->User_model->delete($username);
         redirect('user');
     }
 
-    public function delete_bulk() {
-        $usernames = $this->input->post('usernames');
-        if (!empty($usernames)) {
-            foreach ($usernames as $username) {
-                $this->User_model->delete($username);
-            }
+    public function reset_password($username)
+    {
+        if ($this->session->userdata('role') !== 'admin') {
+            show_error('Anda tidak memiliki akses.', 403);
         }
+
+        $this->User_model->reset_password($username, DEFAULT_USER_PASSWORD);
+
+        $this->session->set_flashdata('success', 'Password user ' . $username . ' direset ke Password default: ' . DEFAULT_USER_PASSWORD);
         redirect('user');
     }
+
+
 }

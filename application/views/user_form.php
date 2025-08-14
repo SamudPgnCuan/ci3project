@@ -47,7 +47,7 @@ switch ($mode) {
 
           <div class="form-group">
             <label for="username">Username</label>
-            <input type="text" name="username" class="form-control" id="username" value="<?= set_value('username', $user->username) ?>" <?= $mode === 'edit' ? 'readonly' : '' ?> required>
+            <input type="text" name="username" class="form-control" id="username" value="<?= set_value('username', $user->username) ?>" required>
           </div>
 
           <div class="form-group">
@@ -55,14 +55,24 @@ switch ($mode) {
             <input type="text" name="nama" class="form-control" id="nama" value="<?= set_value('nama', $user->nama) ?>" required>
           </div>
 
-          <div class="form-group">
-            <label for="password">Password <?= $mode === 'edit' ? '(biarkan kosong jika tidak ingin diubah)' : '' ?></label>
-            <input type="password" name="password" class="form-control" id="password" minlength="8" <?= $mode === 'create' ? 'required' : '' ?>>
-            <div class="form-check mt-1">
-              <input type="checkbox" class="form-check-input" id="showPassword" onclick="togglePassword()" style="transform: scale(1.2); transform-origin: left;">
-              <label class="form-check-label" for="showPassword">Tampilkan Password</label>
+          <?php if ($mode === 'create'): ?>
+            <!-- Password tidak diinput, akan di-set otomatis di controller -->
+            <div class="alert alert-info">
+                Password akan diatur otomatis ke <strong>default password</strong> saat user dibuat.
             </div>
-          </div>
+        <?php elseif ($mode === 'edit'): ?>
+            <!-- Tombol reset password -->
+            <div class="form-group">
+                <label>Password</label>
+                <div>
+                    <a href="<?= site_url('user/reset_password/' . $user->username) ?>" 
+                      class="btn btn-warning"
+                      onclick="return confirm('Yakin ingin mereset password user ini ke default?')">
+                        Reset Password ke Default
+                    </a>
+                </div>
+            </div>
+        <?php endif; ?>
 
           <div class="form-group">
             <label for="role">Role</label>

@@ -5,7 +5,7 @@
   
   <a href="<?= site_url('brand') ?>" class="brand-link">
     <i class="brand-image fa fa-bug" style="font-size: 2rem;"></i>
-    <span class="brand-text ml-1">Samudmin</span>
+    <span class="brand-text ml-1">Menu Destana</span>
   </a>
 
 
@@ -17,13 +17,6 @@
           <a href="<?= site_url() ?>" class="nav-link <?= $segment1 == '' ? 'active' : '' ?>">
             <i class="nav-icon fas fa-home"></i>
             <p>Beranda</p>
-          </a>
-        </li>
-
-        <li class="nav-item">
-          <a href="<?= site_url('user') ?>" class="nav-link <?= $segment1 == 'user' ? 'active' : '' ?>">
-            <i class="nav-icon fas fa-user"></i>
-            <p>Data User</p>
           </a>
         </li>
 
@@ -40,6 +33,15 @@
             <p>Data Destana</p>
           </a>
         </li>
+
+        <?php if ($this->session->userdata('role') === 'admin'): ?>
+        <li class="nav-item">
+          <a href="<?= site_url('user') ?>" class="nav-link <?= $segment1 == 'user' ? 'active' : '' ?>">
+            <i class="nav-icon fas fa-user"></i>
+            <p>Data User</p>
+          </a>
+        </li>
+        <?php endif; ?>
 
       </ul>
     </nav>

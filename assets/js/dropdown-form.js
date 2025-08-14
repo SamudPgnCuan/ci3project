@@ -72,4 +72,11 @@ document.addEventListener('DOMContentLoaded', function () {
     width: '100%',
     dropdownParent: $(desaSelect).parent()
   });
+
+  $('#id_organisasi').select2({
+    placeholder: 'Pilih Organisasi',
+    allowClear: true,
+    width: '100%',
+    dropdownParent: $('#id_organisasi').parent()
+  });
 });

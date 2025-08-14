@@ -17,6 +17,7 @@
 
       <!-- filter -->
       <div class="card-body">
+
         <form id="filterForm" method="get" action="<?= site_url('destana'); ?>" class="p-3">
           <div class="row">
 
@@ -93,7 +94,7 @@
             </div>
 
             <div class="col-md-12 mt-3">
-              <a href="<?= site_url('destana'); ?>" class="btn btn-secondary">Reset</a>
+              <a href="<?= site_url('destana'); ?>" class="btn btn-secondary">Reset Filter</a>
             </div>
 
           </div>
@@ -101,41 +102,43 @@
       </div>
 
       <!-- Data Table -->
-      <table class="table table-bordered table-striped">
-        <thead class="thead-dark">
-          <tr>
-            <th>Kecamatan</th>
-            <th>Desa</th>
-            <th>Tahun Pembentukan</th>
-            <th>Kelas</th>
-            <th>Sumber Dana</th>
-            <th>Jenis Bencana</th>
-            <th style="width: 120px;">Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php if (!empty($destana)): ?>
-            <?php foreach ($destana as $d): ?>
-              <tr>
-                <td><?= $d['nama_kecamatan'] ?></td>
-                <td><?= $d['nama_desa'] ?></td>
-                <td><?= $d['tahun_pembentukan'] ?></td>
-                <td><?= $d['nama_kelas'] ?></td>
-                <td><?= $d['nama_sumber_dana'] ?></td>
-                <td>
-                  <?= !empty($d['ancaman']) ? implode('<br>', $d['ancaman']) : '-' ?>
-                </td>
-                <td class="text-center">
-                  <a href="<?= site_url('destana/edit/' . $d['id']) ?>" class="btn btn-warning btn-sm">Edit</a>
-                  <a href="<?= site_url('destana/delete/' . $d['id']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus data ini?')">Delete</a>
-                </td>
-              </tr>
-            <?php endforeach; ?>
-          <?php else: ?>
-            <tr><td colspan="7" class="text-center">Tidak ada data.</td></tr>
-          <?php endif; ?>
-        </tbody>
-      </table>
+      <div class="card-body table-responsive">
+        <table class="table table-bordered table-striped">
+          <thead class="thead-dark">
+            <tr>
+              <th>Kecamatan</th>
+              <th>Desa</th>
+              <th>Tahun Pembentukan</th>
+              <th>Kelas</th>
+              <th>Sumber Dana</th>
+              <th>Jenis Bencana</th>
+              <th style="width: 140px;">Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php if (!empty($destana)): ?>
+              <?php foreach ($destana as $d): ?>
+                <tr>
+                  <td><?= $d['nama_kecamatan'] ?></td>
+                  <td><?= $d['nama_desa'] ?></td>
+                  <td><?= $d['tahun_pembentukan'] ?></td>
+                  <td><?= $d['nama_kelas'] ?></td>
+                  <td><?= $d['nama_sumber_dana'] ?></td>
+                  <td>
+                    <?= !empty($d['ancaman']) ? implode('<br>', $d['ancaman']) : '-' ?>
+                  </td>
+                  <td class="text-center">
+                    <a href="<?= site_url('destana/edit/' . $d['id']) ?>" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="<?= site_url('destana/delete/' . $d['id']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus data ini?')">Delete</a>
+                  </td>
+                </tr>
+              <?php endforeach; ?>
+            <?php else: ?>
+              <tr><td colspan="7" class="text-center">Tidak ada data.</td></tr>
+            <?php endif; ?>
+          </tbody>
+        </table>
+      </div>
     </div>
 
   </div>
