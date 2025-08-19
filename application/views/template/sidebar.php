@@ -34,6 +34,13 @@
           </a>
         </li>
 
+        <li class="nav-item">
+          <a href="<?= site_url('bencana') ?>" class="nav-link <?= $segment1 == 'bencana' ? 'active' : '' ?>">
+            <i class="nav-icon fas fa-water"></i>
+            <p>Data Bencana</p>
+          </a>
+        </li>
+
         <?php if ($this->session->userdata('role') === 'admin'): ?>
         <li class="nav-item">
           <a href="<?= site_url('user') ?>" class="nav-link <?= $segment1 == 'user' ? 'active' : '' ?>">
