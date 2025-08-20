@@ -59,6 +59,19 @@ class Bencana extends CI_Controller
     public function store()
     {
         $data = $this->input->post();
+
+        // normalisasi date sesuai format MySQL
+        if (!empty($data['tanggal_bencana'])) {
+            $data['tanggal_bencana'] = str_replace('T', ' ', $data['tanggal_bencana']);
+            if (strlen($data['tanggal_bencana']) === 16) { // kurang detik
+                $data['tanggal_bencana'] .= ':00';
+            }
+        }
+
+        // yang gaada di form
+        $data['created_by'] = $this->session->userdata('id'); 
+        $data['created_at'] = date('Y-m-d H:i:s');            
+
         $this->Bencana_model->insert($data);
 
         redirect('bencana');
