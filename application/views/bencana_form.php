@@ -102,6 +102,7 @@ switch ($mode) {
 
         <div class="card-footer">
           <button type="submit" class="btn btn-success"><?= $label_tombol ?></button>
+          <button type="button" id="debugBtn" class="btn btn-warning">Debug Store</button>
           <a href="<?= site_url('bencana') ?>" class="btn btn-secondary">Batal</a>
         </div>
       </form>
@@ -111,4 +112,39 @@ switch ($mode) {
 
 <script>
   const base_url = "<?= base_url() ?>";
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const debugBtn = document.getElementById('debugBtn');
+    const form = document.querySelector('form');
+
+    debugBtn.addEventListener('click', function() {
+      const formData = new FormData(form);
+      const data = {};
+
+      formData.forEach((value, key) => {
+        // Normalisasi datetime-local biar sesuai format MySQL
+        if (key === 'tanggal_bencana' && value) {
+          let fixed = value.replace('T', ' ');
+          if (fixed.length === 16) {
+            fixed += ':00';
+          }
+          data[key] = fixed;
+        } else {
+          data[key] = value;
+        }
+      });
+
+      // Tambahkan audit info (simulasi store di server)
+      data['created_by'] = "<?= $this->session->userdata('id') ?>";
+      data['created_at'] = "<?= date('Y-m-d H:i:s') ?>";
+
+      // Cetak ke console
+      console.log("Data yang akan di-store:", data);
+
+      // Atau tampilkan di halaman (alert / pretty print)
+      alert("Preview Data:\n" + JSON.stringify(data, null, 2));
+    });
+  });
 </script>
