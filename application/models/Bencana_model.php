@@ -1,149 +1,92 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Bencana_model extends CI_Model
-{
-    private $table = 'bencana';
+class Bencana_model extends CI_Model {
 
-    public function list($filters = [])
+    protected $table = 'bencana';
+
+    public function get_all($filter = [])
     {
-        $this->db->select("
-            bencana.*,
-            md.nama_desa,
+        $this->db->select('
+            b.id,
+            b.tanggal_bencana,
+            b.jumlah_korban,
             mk.nama_kecamatan,
+            md.nama_desa,
             ma.nama_ancaman,
             u.nama AS nama_pembuat
-        ");
-        $this->db->from("$this->table AS bencana");
-        $this->db->join('destana d', 'd.id = bencana.id_destana');
-        $this->db->join('master_desa md', 'md.id_desa = d.id_desa');
-        $this->db->join('master_kecamatan mk', 'mk.id_kecamatan = d.id_kecamatan'); // ✅ FIX
-        $this->db->join('master_ancaman ma', 'ma.id_ancaman = bencana.id_ancaman', 'left');
-        $this->db->join('users u', 'u.id = bencana.created_by');
+        ');
+        $this->db->from($this->table . ' b');
+        $this->db->join('destana d', 'd.id = b.id_destana', 'left');
+        $this->db->join('master_desa md', 'd.id_desa = md.id_desa', 'left');
+        $this->db->join('master_kecamatan mk', 'mk.id_kecamatan = d.id_kecamatan', 'left'); 
+        $this->db->join('master_ancaman ma', 'b.id_ancaman = ma.id_ancaman', 'left');
+        $this->db->join('users u', 'u.id = b.created_by', 'left');
 
-        // Filter dinamis
-        if (!empty($filters['id_kecamatan'])) {
-            $this->db->where('mk.id_kecamatan', $filters['id_kecamatan']);
+        if (!empty($filter['id_kecamatan'])) {
+            $this->db->where('mk.id_kecamatan', $filter['id_kecamatan']);
         }
-        if (!empty($filters['id_desa'])) {
-            $this->db->where('md.id_desa', $filters['id_desa']);
+        if (!empty($filter['id_desa'])) {
+            $this->db->where('md.id_desa', $filter['id_desa']);
         }
-        if (!empty($filters['id_ancaman'])) {
-            $this->db->where('bencana.id_ancaman', $filters['id_ancaman']);
+        if (!empty($filter['id_ancaman'])) {
+            $this->db->where('b.id_ancaman', $filter['id_ancaman']);
         }
-        if (!empty($filters['tanggal_mulai'])) {
-            $this->db->where('bencana.tanggal_bencana >=', $filters['tanggal_mulai']);
+        if (!empty($filter['tanggal_mulai'])) {
+            $this->db->where('b.tanggal_bencana >=', $filter['tanggal_mulai']);
         }
-        if (!empty($filters['tanggal_selesai'])) {
-            $this->db->where('bencana.tanggal_bencana <=', $filters['tanggal_selesai'] . ' 23:59:59');
+        if (!empty($filter['tanggal_selesai'])) {
+            $this->db->where('b.tanggal_bencana <=', $filter['tanggal_selesai'] . ' 23:59:59');
         }
 
-        $this->db->order_by('bencana.tanggal_bencana', 'DESC');
-        return $this->db->get()->result();
+        $this->db->order_by('b.tanggal_bencana', 'DESC');
+        return $this->db->get()->result_array();
     }
 
-    public function find($id)
+    public function get_by_id($id)
     {
-        $this->db->select("
-            bencana.*,
-            d.id AS id_destana,
-            md.id_desa, md.nama_desa,
-            mk.id_kecamatan, mk.nama_kecamatan,
-            ma.nama_ancaman
-        ");
-        $this->db->from("$this->table AS bencana");
-        $this->db->join('destana d', 'd.id = bencana.id_destana');
-        $this->db->join('master_desa md', 'md.id_desa = d.id_desa');
-        $this->db->join('master_kecamatan mk', 'mk.id_kecamatan = d.id_kecamatan'); // ✅ FIX
-        $this->db->join('master_ancaman ma', 'ma.id_ancaman = bencana.id_ancaman', 'left');
-        $this->db->where('bencana.id', $id);
-
+        $this->db->where('b.id', $id);
+        $this->db->select('b.*, md.id_desa, d.id_kecamatan'); 
+        $this->db->from($this->table . ' b');
+        $this->db->join('destana d', 'd.id = b.id_destana', 'left');
+        $this->db->join('master_desa md', 'd.id_desa = md.id_desa', 'left');
+        $this->db->join('master_kecamatan mk', 'mk.id_kecamatan = d.id_kecamatan', 'left'); 
         return $this->db->get()->row();
     }
 
-
-    public function insert($data)
-    {
-        $this->db->insert($this->table, $data);
-        return $this->db->insert_id();
+    public function insert($data) {
+        return $this->db->insert($this->table, $data);
     }
 
-    public function update($id, $data)
-    {
-        $this->db->where('id', $id)->update($this->table, $data);
-        return $this->db->affected_rows();
+    public function update($where, $data) {
+        return $this->db->update($this->table, $data, $where);
     }
 
-    public function delete($id)
-    {
-        $this->db->where('id', $id)->delete($this->table);
-        return $this->db->affected_rows();
+    public function delete($where) {
+        return $this->db->delete($this->table, $where);
     }
 
-    // Utilitas untuk dropdown filter
-    public function get_kecamatan_all()
+    public function get_master_lists($exclude_used_desa = false, $id_desa_aktif = null)
     {
-        return $this->db->order_by('nama_kecamatan','ASC')->get('master_kecamatan')->result();
+        return [
+            'kecamatan_list' => $this->db->get('master_kecamatan')->result(),
+            'desa_list'      => $this->db->get('master_desa')->result(),
+            'ancaman_list'   => $this->db->get('master_ancaman')->result()
+        ];
     }
 
-    public function get_ancaman_all()
-    {
-        return $this->db->order_by('nama_ancaman','ASC')->get('master_ancaman')->result();
-    }
-
-    // Ambil desa yang HANYA muncul di tabel destana (desa yang terdaftar sbg Destana)
-    public function get_desa_by_kecamatan($id_kecamatan)
-    {
-        $this->db->select('md.id_desa, md.nama_desa');
-        $this->db->from('destana d');
-        $this->db->join('master_desa md', 'md.id_desa = d.id_desa');
-        $this->db->where('d.id_kecamatan', $id_kecamatan);
-        $this->db->order_by('md.nama_desa', 'ASC');
-        return $this->db->get()->result();
-    }
-
-    // Ambil pasangan id_destana + label "Desa (Kec)" untuk form create
     public function get_destana_by_kecamatan($id_kecamatan = null)
     {
-        $this->db->select('d.id AS id_destana, md.nama_desa, mk.nama_kecamatan');
+        $this->db->select('d.id AS id_destana, d.id_kecamatan, md.nama_desa, mk.nama_kecamatan');
         $this->db->from('destana d');
         $this->db->join('master_desa md', 'md.id_desa = d.id_desa');
         $this->db->join('master_kecamatan mk', 'mk.id_kecamatan = d.id_kecamatan');
+        
         if (!empty($id_kecamatan)) {
-            $this->db->where('mk.id_kecamatan', $id_kecamatan);
+            $this->db->where('d.id_kecamatan', $id_kecamatan);
         }
+
         $this->db->order_by('mk.nama_kecamatan ASC, md.nama_desa ASC');
-        return $this->db->get()->result();
-    }
-
-    /* ====== DATA UNTUK CHART ====== */
-
-    // Tren jumlah kejadian per bulan (count report)
-    public function chart_tren_bulanan($tahun = null)
-    {
-        if ($tahun) {
-            $this->db->where('YEAR(tanggal_bencana)', $tahun);
-        }
-        $this->db->select('DATE_FORMAT(tanggal_bencana, "%Y-%m") AS ym, COUNT(*) AS total');
-        $this->db->from($this->table);
-        $this->db->group_by('ym');
-        $this->db->order_by('ym', 'ASC');
-        return $this->db->get()->result();
-    }
-
-    // Total korban per kecamatan
-    public function chart_korban_per_kecamatan($tahun = null)
-    {
-        $this->db->select('mk.nama_kecamatan, SUM(b.jumlah_korban) AS total_korban');
-        $this->db->from("$this->table b");
-        $this->db->join('destana d', 'd.id = b.id_destana');
-        $this->db->join('master_desa md', 'md.id_desa = d.id_desa');
-        $this->db->join('master_kecamatan mk', 'mk.id_kecamatan = d.id_kecamatan');
-        if ($tahun) {
-            $this->db->where('YEAR(b.tanggal_bencana)', $tahun);
-        }
-        $this->db->group_by('mk.id_kecamatan');
-        $this->db->order_by('mk.nama_kecamatan','ASC');
         return $this->db->get()->result();
     }
 }

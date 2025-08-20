@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * @property Bencana_model $bencana
+ * @property Bencana_model $Bencana_model
  */
 
 class Bencana extends CI_Controller
@@ -11,170 +11,88 @@ class Bencana extends CI_Controller
     {
         parent::__construct();
         check_login();
-
-        date_default_timezone_set('Asia/Jakarta');
-
-        $this->load->model('Bencana_model', 'bencana');
-        $this->load->helper(['url','form']);
+        $this->load->model('Bencana_model');
         $this->load->library('form_validation');
+        $this->load->helper(['url', 'form']);
     }
 
-    // List + Filter
+    private function load_template($view, $data = [])
+    {
+        $this->load->view('template/header');
+        $this->load->view('template/sidebar');
+        $this->load->view($view, $data);
+        $this->load->view('template/footer');
+    }
+
     public function index()
     {
-        $filters = [
-            'id_kecamatan'   => $this->input->get('id_kecamatan'),
-            'id_desa'        => $this->input->get('id_desa'),
+        $filter = [
+            'id_kecamatan'   => $this->input->get('kecamatan'),
+            'id_desa'        => $this->input->get('desa'),
             'id_ancaman'     => $this->input->get('id_ancaman'),
             'tanggal_mulai'  => $this->input->get('tanggal_mulai'),
             'tanggal_selesai'=> $this->input->get('tanggal_selesai'),
         ];
-        $data['rows'] = $this->bencana->list($filters);
 
-        // Dropdown filter
-        $data['kecamatan'] = $this->bencana->get_kecamatan_all();
-        $data['ancaman']   = $this->bencana->get_ancaman_all();
+        $data['mode'] = 'list';
+        $data['bencana'] = $this->Bencana_model->get_all($filter);
+        $data = array_merge($data, $this->Bencana_model->get_master_lists());
 
-        // Untuk menjaga nilai filter di form
-        $data['filters'] = $filters;
-
-        $this->load->view('bencana/bencana_list', $data);
+        $data['load_select2'] = true;
+        $data['scripts'] = ['dropdown-listfilter.js'];
+        $this->load_template('bencana_list', $data);
     }
 
     public function create()
     {
-        // Dropdown kecamatan & ancaman
-        $data['kecamatan'] = $this->bencana->get_kecamatan_all();
-        $data['ancaman']   = $this->bencana->get_ancaman_all();
-        $this->load->view('bencana/bencana_form', $data);
+        $data['mode'] = 'create';
+        $data['bencana'] = null;
+
+        $data = array_merge($data, $this->Bencana_model->get_master_lists(true));
+        $data['desa_list'] = [];
+
+        $data['load_select2'] = true;
+        $data['scripts'] = ['dropdown-bencana-form.js'];
+        $this->load_template('bencana_form', $data);
     }
 
     public function store()
     {
-        // Validasi form
-        $this->form_validation->set_rules('tanggal_bencana', 'Tanggal Kejadian', 'required');
-        $this->form_validation->set_rules('id_destana', 'Desa (Destana)', 'required|integer');
-        $this->form_validation->set_rules('jumlah_korban', 'Jumlah Korban', 'required|integer');
+        $data = $this->input->post();
+        $this->Bencana_model->insert($data);
 
-        if ($this->form_validation->run() === FALSE) {
-            return $this->create();
-        }
-
-        $payload = [
-            'id_destana'       => (int)$this->input->post('id_destana'),
-            'id_ancaman'       => $this->input->post('id_ancaman') ? (int)$this->input->post('id_ancaman') : NULL,
-            'tanggal_bencana'  => $this->input->post('tanggal_bencana'), // format: Y-m-d H:i:s dari input datetime-local
-            'jumlah_korban'    => (int)$this->input->post('jumlah_korban'),
-            'detail_kerusakan' => $this->input->post('detail_kerusakan'),
-            'created_by'       => (int)$this->session->userdata('id'), // sesuaikan key session id user
-            // created_at otomatis oleh DB
-        ];
-
-        $this->bencana->insert($payload);
-        $this->session->set_flashdata('success', 'Laporan bencana berhasil ditambahkan.');
         redirect('bencana');
     }
 
     public function edit($id)
     {
-        $row = $this->bencana->find($id);
-        if (!$row) {
-            show_404();
+        $data['mode'] = 'edit';
+        $bencana = $this->Bencana_model->get_by_id($id);
+        if (!$bencana) {
+            show_error("Data dengan ID $id tidak ditemukan", 404);
         }
 
-        $data['row']       = $row;
-        $data['kecamatan'] = $this->bencana->get_kecamatan_all();
-        $data['ancaman']   = $this->bencana->get_ancaman_all();
+        $data['bencana'] = $bencana;
+        $data = array_merge($data, $this->Bencana_model->get_master_lists(true, $bencana->id_desa));
 
-        // preload: daftar destana di kecamatan bersangkutan
-        $data['destana_opsi'] = $this->bencana->get_destana_by_kecamatan($row->id_kecamatan);
-
-        $this->load->view('bencana/bencana_form', $data);
+        $data['load_select2'] = true;
+        $data['scripts'] = ['dropdown-form.js'];
+        $this->load_template('bencana_form', $data);
     }
 
-    public function update($id)
+    public function update()
     {
-        $row = $this->bencana->find($id);
-        if (!$row) {
-            show_404();
-        }
+        $data = $this->input->post();
+        $id = $data['id'];
+        unset($data['id']);
 
-        $this->form_validation->set_rules('tanggal_bencana', 'Tanggal Kejadian', 'required');
-        $this->form_validation->set_rules('id_destana', 'Desa (Destana)', 'required|integer');
-        $this->form_validation->set_rules('jumlah_korban', 'Jumlah Korban', 'required|integer');
-
-        if ($this->form_validation->run() === FALSE) {
-            return $this->edit($id);
-        }
-
-        $payload = [
-            'id_destana'       => (int)$this->input->post('id_destana'),
-            'id_ancaman'       => $this->input->post('id_ancaman') ? (int)$this->input->post('id_ancaman') : NULL,
-            'tanggal_bencana'  => $this->input->post('tanggal_bencana'),
-            'jumlah_korban'    => (int)$this->input->post('jumlah_korban'),
-            'detail_kerusakan' => $this->input->post('detail_kerusakan'),
-        ];
-
-        $this->bencana->update($id, $payload);
-        $this->session->set_flashdata('success', 'Laporan bencana berhasil diperbarui.');
+        $this->Bencana_model->update(['id' => $id], $data);
         redirect('bencana');
     }
 
     public function delete($id)
     {
-        $this->bencana->delete($id);
-        $this->session->set_flashdata('success', 'Laporan bencana berhasil dihapus.');
+        $this->Bencana_model->delete(['id' => $id]);
         redirect('bencana');
-    }
-
-    /* ===== AJAX untuk dropdown dependent ===== */
-
-    // Ambil daftar desa (Destana) berdasarkan kecamatan → kembalikan <option>
-    public function ajax_destana_options()
-    {
-        $id_kecamatan = $this->input->get('id_kecamatan');
-        $list = $this->bencana->get_destana_by_kecamatan($id_kecamatan);
-
-        $options = '<option value="">-- Pilih Desa (Destana) --</option>';
-        foreach ($list as $r) {
-            $label = $r->nama_desa . ' (' . $r->nama_kecamatan . ')';
-            $options .= '<option value="'.$r->id_destana.'">'.$label.'</option>';
-        }
-        header('Content-Type: text/html; charset=utf-8');
-        echo $options;
-    }
-
-    /* ====== API data Chart.js ====== */
-
-    public function chart_tren()
-    {
-        $tahun = $this->input->get('tahun'); // optional
-        $rows = $this->bencana->chart_tren_bulanan($tahun);
-
-        $labels = [];
-        $data   = [];
-        foreach ($rows as $r) {
-            $labels[] = $r->ym;       // YYYY-MM
-            $data[]   = (int)$r->total;
-        }
-        $this->output
-            ->set_content_type('application/json')
-            ->set_output(json_encode(['labels'=>$labels, 'data'=>$data]));
-    }
-
-    public function chart_korban_per_kecamatan()
-    {
-        $tahun = $this->input->get('tahun'); // optional
-        $rows = $this->bencana->chart_korban_per_kecamatan($tahun);
-
-        $labels = [];
-        $data   = [];
-        foreach ($rows as $r) {
-            $labels[] = $r->nama_kecamatan;
-            $data[]   = (int)$r->total_korban;
-        }
-        $this->output
-            ->set_content_type('application/json')
-            ->set_output(json_encode(['labels'=>$labels, 'data'=>$data]));
     }
 }

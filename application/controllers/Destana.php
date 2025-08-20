@@ -4,8 +4,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 /**
  * @property Destana_model $Destana_model
  * @property Destana_ancaman_model $Destana_ancaman_model
- * @property CI_Input $input
- * @property CI_DB_mysqli_driver $db
  */
 
 class Destana extends CI_Controller
