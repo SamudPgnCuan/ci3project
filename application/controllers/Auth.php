@@ -25,6 +25,7 @@ class Auth extends CI_Controller {
 
         if ($user && $user->password === $password) {
             $this->session->set_userdata([
+                'id'       => $user->id ,
                 'username' => $user->username,
                 'nama'     => $user->nama,
                 'role'     => $user->role,
