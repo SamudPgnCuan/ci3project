@@ -24,7 +24,7 @@ class Bencana extends CI_Controller
         $this->load->view('template/footer');
     }
 
-    public function index()
+    public function index($page = 0)
     {
         $filter = [
             'id_kecamatan'   => $this->input->get('kecamatan'),
@@ -34,8 +34,19 @@ class Bencana extends CI_Controller
             'tanggal_selesai'=> $this->input->get('tanggal_selesai'),
         ];
 
-        $data['mode'] = 'list';
-        $data['bencana'] = $this->Bencana_model->get_all($filter);
+        $allData = $this->Bencana_model->get_all($filter);
+
+        // Pagination manual di view aja
+        $limit = 40;
+        $total = count($allData);
+        $offset = $page * $limit;
+        $pagedData = array_slice($allData, $offset, $limit);
+
+        $data['bencana'] = $pagedData;
+        $data['total'] = $total;
+        $data['page'] = $page;
+        $data['limit'] = $limit;
+
         $data = array_merge($data, $this->Bencana_model->get_master_lists());
 
         $data['load_select2'] = true;
@@ -43,12 +54,14 @@ class Bencana extends CI_Controller
         $this->load_template('bencana_list', $data);
     }
 
+
+
     public function create()
     {
         $data['mode'] = 'create';
         $data['bencana'] = null;
 
-        $data = array_merge($data, $this->Bencana_model->get_master_lists(true));
+        $data = array_merge($data, $this->Bencana_model->get_master_lists());
         $data['desa_list'] = [];
 
         $data['load_select2'] = true;
@@ -86,7 +99,7 @@ class Bencana extends CI_Controller
         }
 
         $data['bencana'] = $bencana;
-        $data = array_merge($data, $this->Bencana_model->get_master_lists(true, $bencana->id_desa));
+        $data = array_merge($data, $this->Bencana_model->get_master_lists());
 
         $data['load_select2'] = true;
         $data['scripts'] = ['dropdown-form.js'];

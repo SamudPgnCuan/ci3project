@@ -66,7 +66,7 @@ class Bencana_model extends CI_Model {
         return $this->db->delete($this->table, $where);
     }
 
-    public function get_master_lists($exclude_used_desa = false, $id_desa_aktif = null)
+    public function get_master_lists()
     {
         return [
             'kecamatan_list' => $this->db->get('master_kecamatan')->result(),

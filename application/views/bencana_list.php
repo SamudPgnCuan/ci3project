@@ -103,6 +103,20 @@
             <?php endif; ?>
           </tbody>
         </table>
+        <?php
+        $total_pages = ceil($total / $limit);
+        ?>
+        <nav class="mt-3">
+          <ul class="pagination">
+            <?php for ($i = 0; $i < $total_pages; $i++): ?>
+              <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
+                <a class="page-link" href="<?= site_url('bencana/index/'.$i) ?>">
+                  <?= $i+1 ?>
+                </a>
+              </li>
+            <?php endfor; ?>
+          </ul>
+        </nav>
       </div>
     </div>
 
@@ -118,6 +132,8 @@
 
   </div>
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
   const base_url = '<?= base_url() ?>';
