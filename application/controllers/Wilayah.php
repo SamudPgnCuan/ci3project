@@ -3,8 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * @property Destana_model $Destana_model
- * @property CI_Input $input
- * @property CI_DB_mysqli_driver $db
+ * @property Bencana_model $Bencana_model
  */
 
 class Wilayah extends CI_Controller
@@ -35,5 +34,12 @@ class Wilayah extends CI_Controller
         }
 
         echo json_encode($desa);
+    }
+
+     public function get_destana_by_kecamatan($id_kecamatan = null)
+    {
+        $this->load->model('Bencana_model');
+        $result = $this->Bencana_model->get_destana_by_kecamatan($id_kecamatan);
+        echo json_encode($result);
     }
 }

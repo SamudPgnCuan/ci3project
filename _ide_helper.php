@@ -12,11 +12,12 @@
  * @property CI_Session       $session
  * @property CI_DB_mysqli_driver $db
  * @property CI_Form_validation $form_validation
+ * @property CI_Output           $output
  */
 class CI_Controller {}
 
 /**
- * @property CI_DB_query_builder $db
+ * @property CI_DB_query_builder|CI_DB_mysqli_driver $db
  */
 class CI_Model {}
 
