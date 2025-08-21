@@ -123,7 +123,7 @@
     <!-- Chart Sementara -->
     <div class="card mt-4">
       <div class="card-header">
-        <h3 class="card-title">Grafik Tren Bencana</h3>
+        <h3 class="card-title">Grafik ngasal</h3>
       </div>
       <div class="card-body">
         <canvas id="chartTren"></canvas>
