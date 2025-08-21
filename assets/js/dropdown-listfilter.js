@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const preselectedDesaId = $('#filter_desa').data('selected');
   filterDesaOptions(preselectedDesaId);
 
-  // Fungsi inisialisasi Select2 dengan fokus otomatis
+  // Fungsi inisialisasi Select2
   function initSelect2(selector, placeholder) {
     $(selector).select2({
       placeholder: placeholder,
@@ -19,28 +19,31 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Inisialisasi semua dropdown
   initSelect2('#filter_kecamatan', 'Pilih Kecamatan');
-  initSelect2('#filter_desa', 'Pilih Kecamatan dulu');
+  initSelect2('#filter_desa', 'Pilih Desa');
   initSelect2('#filter_organisasi', 'Pilih Organisasi');
 
-  // Fungsi untuk memfilter desa berdasarkan kecamatan
+  // Fungsi untuk memfilter desa
   function filterDesaOptions(preselectId = null) {
     const selectedKecamatanId = $('#filter_kecamatan').val();
     const desaSelect = $('#filter_desa');
 
     desaSelect.empty();
 
-    if (!selectedKecamatanId) {
-      desaSelect.trigger('change.select2');
-      return;
-    }
+    // Pilih URL sesuai kondisi
+    const url = selectedKecamatanId
+      ? base_url + 'wilayah/get_desa_by_kecamatan/' + selectedKecamatanId
+      : base_url + 'wilayah/get_all_desa';
 
-    fetch(base_url + 'wilayah/get_desa_by_kecamatan/' + selectedKecamatanId)
+    fetch(url)
       .then(response => response.json())
       .then(data => {
         desaSelect.append(new Option('-- Semua Desa --', 'all', false, preselectId === 'all'));
         data.forEach(desa => {
           const isSelected = desa.id_desa == preselectId;
-          desaSelect.append(new Option(desa.nama_desa, desa.id_desa, false, isSelected));
+          // simpan id_kecamatan di attribute option
+          const option = new Option(desa.nama_desa, desa.id_desa, false, isSelected);
+          $(option).attr('data-kecamatan', desa.id_kecamatan);
+          desaSelect.append(option);
         });
         desaSelect.trigger('change.select2');
       })
@@ -55,8 +58,13 @@ document.addEventListener('DOMContentLoaded', function () {
     $('#filterForm').submit();
   });
 
-  // Submit otomatis jika filter desa berubah
+  // Jika desa berubah → set kecamatan otomatis + submit
   $('#filter_desa').on('select2:select select2:clear', function () {
+    const selectedOption = $(this).find(':selected');
+    const kecamatanId = selectedOption.data('kecamatan');
+    if (kecamatanId) {
+      $('#filter_kecamatan').val(kecamatanId).trigger('change.select2');
+    }
     $('#filterForm').submit();
   });
 
@@ -70,7 +78,6 @@ document.addEventListener('DOMContentLoaded', function () {
         url.searchParams.delete('organisasi');
     }
     window.location.href = url.toString();
-});
-
+  });
 
 });
