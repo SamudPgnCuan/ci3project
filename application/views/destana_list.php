@@ -128,6 +128,14 @@
                     <?= !empty($d['ancaman']) ? implode('<br>', $d['ancaman']) : '-' ?>
                   </td>
                   <td class="text-center">
+                    <button type="button" 
+                        class="btn btn-info btn-sm btn-bencana" 
+                        data-id="<?= $d['id'] ?>" 
+                        data-desa="<?= $d['nama_desa'] ?>" 
+                        data-toggle="modal" 
+                        data-target="#bencanaModal">
+                      Lihat Bencana
+                    </button>
                     <a href="<?= site_url('destana/edit/' . $d['id']) ?>" class="btn btn-warning btn-sm">Edit</a>
                     <a href="<?= site_url('destana/delete/' . $d['id']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus data ini?')">Delete</a>
                   </td>
@@ -138,6 +146,33 @@
             <?php endif; ?>
           </tbody>
         </table>
+
+        <!-- Modal Bencana -->
+        <div class="modal fade" id="bencanaModal" tabindex="-1" role="dialog" aria-hidden="true">
+          <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Riwayat Bencana di <span id="modalNamaDesa"></span></h5>
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+              </div>
+              <div class="modal-body">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>No</th>
+                      <th>Tanggal</th>
+                      <th>Ancaman</th>
+                    </tr>
+                  </thead>
+                  <tbody id="bencanaTableBody">
+                    <tr><td colspan="3" class="text-center">Memuat data...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -148,4 +183,43 @@
   const base_url = '<?= base_url() ?>';
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // Saat tombol "Lihat Bencana" diklik
+  $(document).on('click', '.btn-bencana', function () {
+    const idDestana = $(this).data('id');
+    const namaDesa  = $(this).data('desa');
+    $('#modalNamaDesa').text(namaDesa);
+
+    // Tampilkan loading
+    $('#bencanaTableBody').html('<tr><td colspan="3" class="text-center">Memuat data...</td></tr>');
+
+    // Fetch data ke endpoint
+    fetch(base_url + 'bencana/get_by_destana/' + idDestana)
+      .then(response => response.json())
+      .then(data => {
+        if (data.length === 0) {
+          $('#bencanaTableBody').html('<tr><td colspan="3" class="text-center">Tidak ada laporan bencana</td></tr>');
+          return;
+        }
+
+        let rows = '';
+        data.forEach((row, i) => {
+          rows += `
+            <tr>
+              <td>${i + 1}</td>
+              <td>${row.tanggal_bencana ?? '-'}</td>
+              <td>${row.nama_ancaman ?? '-'}</td>
+            </tr>
+          `;
+        });
+        $('#bencanaTableBody').html(rows);
+      })
+      .catch(err => {
+        console.error(err);
+        $('#bencanaTableBody').html('<tr><td colspan="3" class="text-center text-danger">Gagal memuat data</td></tr>');
+      });
+  });
+});
+</script>
 

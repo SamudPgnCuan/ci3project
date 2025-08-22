@@ -86,7 +86,24 @@ class Bencana_model extends CI_Model {
             $this->db->where('d.id_kecamatan', $id_kecamatan);
         }
 
-        $this->db->order_by('mk.nama_kecamatan ASC, md.nama_desa ASC');
+        $this->db->order_by('mk.id_kecamatan ASC, md.id_desa ASC');
         return $this->db->get()->result();
     }
+
+    public function get_by_destana($id_destana)
+    {
+        $this->db->select('
+            bencana.id,
+            bencana.tanggal_bencana,
+            bencana.detail_kerusakan,
+            master_ancaman.nama_ancaman
+        ');
+        $this->db->from('bencana');
+        $this->db->join('master_ancaman', 'bencana.id_ancaman = master_ancaman.id_ancaman', 'left');
+        $this->db->where('bencana.id_destana', $id_destana);
+        $this->db->order_by('bencana.tanggal_bencana', 'DESC');
+
+        return $this->db->get()->result();
+    }
+
 }

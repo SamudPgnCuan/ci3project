@@ -15,7 +15,7 @@ class Destana_ancaman_model extends CI_Model
         return $this->db->insert_batch($this->table, $data);
     }
 
-    public function delete_by_destana($id_destana)
+    public function delete_by_destana($id_destana) //and this?
     {
         return $this->db->delete($this->table, ['id_destana' => $id_destana]);
     }
