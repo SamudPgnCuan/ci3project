@@ -25,7 +25,10 @@ class Relawan_model extends CI_Model
             $this->db->where('r.id_organisasi', $filter['id_organisasi']);
         }
 
-        return $this->db->get()->result_array();
+        $this->db->order_by('r.id_kecamatan', 'asc');
+        $this->db->order_by('r.id_desa', 'asc');
+
+        return $this->db->get()->result();
     }
 
     public function insert($data)

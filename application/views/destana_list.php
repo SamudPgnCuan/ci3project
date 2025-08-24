@@ -183,7 +183,7 @@
   const base_url = '<?= base_url() ?>';
 </script>
 
-<script>
+<script> //buat modal
 document.addEventListener('DOMContentLoaded', function () {
   // Saat tombol "Lihat Bencana" diklik
   $(document).on('click', '.btn-bencana', function () {
