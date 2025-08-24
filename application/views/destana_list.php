@@ -17,7 +17,6 @@
 
       <!-- filter -->
       <div class="card-body">
-
         <form id="filterForm" method="get" action="<?= site_url('destana'); ?>" class="p-3">
           <div class="row">
 
@@ -26,10 +25,8 @@
               <select name="kecamatan" id="filter_kecamatan" class="form-control select2" data-selected="<?= $this->input->get('kecamatan') ?>">
                 <option value="">-- Semua Kecamatan --</option>
                 <?php foreach ($kecamatan_list as $k): ?>
-                  <option
-                   value="<?= $k->id_kecamatan ?>"
-                   <?= ($this->input->get('kecamatan') == $k->id_kecamatan ) ? 'selected' : '' ?>> 
-                   <?= $k->nama_kecamatan ?>
+                  <option value="<?= $k->id_kecamatan ?>" <?= ($this->input->get('kecamatan') == $k->id_kecamatan ) ? 'selected' : '' ?>>
+                    <?= $k->nama_kecamatan ?>
                   </option>
                 <?php endforeach; ?>
               </select>
@@ -39,12 +36,12 @@
               <label for="filter_desa">Desa</label>
               <select name="desa" id="filter_desa" class="form-control select2" data-selected="<?= $this->input->get('desa') ?>">
                 <option value="">-- Semua Desa --</option>
-                <!-- dari javascript? -->
+                <!-- akan di-populate oleh JS -->
               </select>
             </div>
 
             <div class="col-md-4">
-              <label>Tahun Pembentukan</label>
+              <label for="filter_tahun">Tahun Pembentukan</label>
               <select name="tahun" id="filter_tahun" class="form-control">
                 <option value="">-- Semua Tahun --</option>
                 <?php
@@ -58,11 +55,11 @@
             </div>
 
             <div class="col-md-4">
-              <label>Kelas</label>
+              <label for="filter_kelas">Kelas</label>
               <select name="id_kelas" id="filter_kelas" class="form-control">
                 <option value="">-- Semua Kelas --</option>
                 <?php foreach ($kelas_list as $row): ?>
-                  <option value="<?= $row->id_kelas ?>" <?= set_select('id_kelas', $this->input->get('id_kelas'), $this->input->get('id_kelas') == $row->id_kelas) ?>>
+                  <option value="<?= $row->id_kelas ?>" <?= ($this->input->get('id_kelas') == $row->id_kelas) ? 'selected' : '' ?>>
                     <?= $row->nama_kelas ?>
                   </option>
                 <?php endforeach; ?>
@@ -70,11 +67,11 @@
             </div>
 
             <div class="col-md-4">
-              <label>Sumber Dana</label>
+              <label for="filter_sumber">Sumber Dana</label>
               <select name="id_sumber_dana" id="filter_sumber" class="form-control">
                 <option value="">-- Semua Sumber Dana --</option>
                 <?php foreach ($sumber_dana_list as $row): ?>
-                  <option value="<?= $row->id_sumber_dana ?>" <?= set_select('id_sumber_dana', $this->input->get('id_sumber_dana'), $this->input->get('id_sumber_dana') == $row->id_sumber_dana) ?>>
+                  <option value="<?= $row->id_sumber_dana ?>" <?= ($this->input->get('id_sumber_dana') == $row->id_sumber_dana) ? 'selected' : '' ?>>
                     <?= $row->nama_sumber_dana ?>
                   </option>
                 <?php endforeach; ?>
@@ -82,11 +79,11 @@
             </div>
 
             <div class="col-md-4">
-              <label>Jenis Ancaman</label>
+              <label for="filter_ancaman">Jenis Ancaman</label>
               <select name="id_ancaman" id="filter_ancaman" class="form-control">
                 <option value="">-- Semua Ancaman --</option>
                 <?php foreach ($ancaman_list as $row): ?>
-                  <option value="<?= $row->id_ancaman ?>" <?= set_select('id_ancaman', $this->input->get('id_ancaman'), $this->input->get('id_ancaman') == $row->id_ancaman) ?>>
+                  <option value="<?= $row->id_ancaman ?>" <?= ($this->input->get('id_ancaman') == $row->id_ancaman) ? 'selected' : '' ?>>
                     <?= $row->nama_ancaman ?>
                   </option>
                 <?php endforeach; ?>

@@ -36,6 +36,7 @@
               <label for="filter_desa">Desa</label>
               <select name="desa" id="filter_desa" class="form-control select2" data-selected="<?= $this->input->get('desa') ?>">
                 <option value="">-- Semua Desa --</option>
+                <!-- di-populate oleh JS -->
               </select>
             </div>
 
@@ -44,7 +45,7 @@
               <select name="id_ancaman" id="filter_ancaman" class="form-control">
                 <option value="">-- Semua Ancaman --</option>
                 <?php foreach ($ancaman_list as $a): ?>
-                  <option value="<?= $a->id_ancaman ?>" <?= $this->input->get('id_ancaman') == $a->id_ancaman ? 'selected' : '' ?>>
+                  <option value="<?= $a->id_ancaman ?>" <?= ($this->input->get('id_ancaman') == $a->id_ancaman) ? 'selected' : '' ?>>
                     <?= $a->nama_ancaman ?>
                   </option>
                 <?php endforeach; ?>
@@ -52,13 +53,13 @@
             </div>
 
             <div class="col-md-4">
-              <label>Tanggal Mulai</label>
-              <input type="date" name="tanggal_mulai" class="form-control" value="<?= $this->input->get('tanggal_mulai') ?>">
+              <label for="filter_tanggal_mulai">Tanggal Mulai</label>
+              <input id="filter_tanggal_mulai" type="date" name="tanggal_mulai" class="form-control" value="<?= $this->input->get('tanggal_mulai') ?>">
             </div>
 
             <div class="col-md-4">
-              <label>Tanggal Selesai</label>
-              <input type="date" name="tanggal_selesai" class="form-control" value="<?= $this->input->get('tanggal_selesai') ?>">
+              <label for="filter_tanggal_selesai">Tanggal Selesai</label>
+              <input id="filter_tanggal_selesai" type="date" name="tanggal_selesai" class="form-control" value="<?= $this->input->get('tanggal_selesai') ?>">
             </div>
 
             <div class="col-md-12 mt-3">

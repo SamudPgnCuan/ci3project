@@ -23,13 +23,17 @@ document.addEventListener('DOMContentLoaded', function () {
   initSelect2('#filter_desa', 'Pilih Desa');
   initSelect2('#filter_organisasi', 'Pilih Organisasi');
   initSelect2('#filter_ancaman', 'Pilih Ancaman');
+  initSelect2('#filter_kelas', 'Pilih Kelas');
+  initSelect2('#filter_sumber', 'Pilih Sumber Dana');
+  initSelect2('#filter_tahun', 'Pilih Tahun');
 
-  // fungsi untuk populate daftar desa (dipanggil hanya saat page load / ketika diperlukan)
+  // fungsi untuk populate daftar desa (dipanggil pada page load dan saat kecamatan berubah)
   function filterDesaOptions(preselectId = '') {
     const selectedKecamatanId = $('#filter_kecamatan').val();
     const desaSelect = $('#filter_desa');
 
-    // clear dulu
+    if (!desaSelect.length) return;
+
     desaSelect.empty();
 
     const url = selectedKecamatanId
@@ -39,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch(url)
       .then(response => response.json())
       .then(data => {
-        // default "semua" kita representasikan sebagai value kosong '' saat submit
+        // representasikan opsi "Semua" sebagai value kosong ('')
         desaSelect.append(new Option('-- Semua Desa --', '', false, preselectId === '' || preselectId === null));
 
         data.forEach(desa => {
@@ -49,7 +53,6 @@ document.addEventListener('DOMContentLoaded', function () {
           desaSelect.append(option);
         });
 
-        // beri tahu select2 supaya render ulang
         desaSelect.trigger('change.select2');
       })
       .catch(error => console.error('Gagal mengambil data desa:', error));
@@ -61,8 +64,6 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // ---------- helper utk submit yang menjaga semua param ----------
-  // kita baca semua input/select di form dan bangun query sendiri, sehingga
-  // semua param yang aktif akan selalu dikirim (tidak hilang karena submit partial).
   function submitFiltersByForm() {
     const form = document.getElementById('filterForm');
     if (!form) return;
@@ -70,38 +71,29 @@ document.addEventListener('DOMContentLoaded', function () {
     const fd = new FormData(form);
     const params = new URLSearchParams();
 
-    // iterate semua pairs, tapi skip nilai kosong
     for (const [key, value] of fd.entries()) {
-      // beberapa control (misalnya kita sempat menyimpan 'all'), anggap '' = semua => skip
       if (value === null) continue;
       const v = String(value).trim();
+      // skip empty / "all"
       if (v === '' || v.toLowerCase() === 'all') continue;
       params.append(key, v);
     }
 
-    // bangun url baru dan load
     const url = window.location.origin + window.location.pathname + (params.toString() ? '?' + params.toString() : '');
     window.location.href = url;
   }
 
-  // variant yang hanya submit langsung (fallback) -- tidak direkomendasikan
-  function fallbackSubmit() {
-    $('#filterForm').submit();
-  }
+  // ---------- BIND EVENT HANDLERS ----------
 
-  // ---------- Bind event handlers ----------
-  // 1) KECAMATAN: cukup submit form (jangan panggil filterDesaOptions() di sini)
-  // kita biarkan page reload dan saat page load select-desanya di-populate sesuai param kecamatan.
+  // kecamatan: submit (desanya akan di-populate pada next page load)
   $('#filter_kecamatan').on('select2:select select2:clear change', function () {
-    // langsung submit via submitFiltersByForm supaya semua param lain tetap ikut
     submitFiltersByForm();
   });
 
-  // 2) DESA: ketika user pilih desa, set kecamatan otomatis (jika perlu) lalu submit
+  // desa: set kecamatan otomatis jika perlu, lalu submit
   $('#filter_desa').on('select2:select select2:clear change', function () {
     let val = $(this).val();
 
-    // jika pilih opsi "semua" kita mengirim kosong (skipped)
     if (val === 'all') {
       $(this).val('').trigger('change.select2');
       val = '';
@@ -109,18 +101,16 @@ document.addEventListener('DOMContentLoaded', function () {
       const selectedOption = $(this).find(':selected');
       const kecamatanId = selectedOption.data('kecamatan');
       if (kecamatanId) {
-        // set kecamatan (ini tidak akan memicu infinite loop karena kecamatan change akan submit)
         $('#filter_kecamatan').val(kecamatanId).trigger('change.select2');
       }
     }
 
-    // submit (pakai builder URL agar semua param dipertahankan)
     submitFiltersByForm();
   });
 
-  // 3) Filter lain (organisasi, ancaman, tahun, tanggal, dsb)
-  // Tangani dua event: select2 events dan native 'change' untuk jaga-jaga.
-  $('#filter_organisasi, #filter_ancaman, #filter_tahun, #filter_bulan, #filter_tanggal_mulai, #filter_tanggal_selesai')
+  // semua filter lain (organisasi, ancaman, tahun, kelas, sumber, tanggal, dsb)
+  // tangani select2 events dan native change (untuk input date)
+  $('#filter_organisasi, #filter_ancaman, #filter_tahun, #filter_kelas, #filter_sumber, #filter_tanggal_mulai, #filter_tanggal_selesai')
     .on('select2:select select2:clear change', function () {
       submitFiltersByForm();
     });
