@@ -5,28 +5,27 @@ class Relawan_model extends CI_Model
 {
     protected $table = 'relawan';
 
-    public function get_all($id_kecamatan = null, $id_desa = null, $id_organisasi = null)
+    public function get_all($filter = [])
     {
-        $this->db
-            ->select('r.*, mk.nama_kecamatan, md.nama_desa, mo.nama_organisasi')
-            ->from($this->table . ' r')
-            ->join('master_kecamatan mk', 'mk.id_kecamatan = r.id_kecamatan')
-            ->join('master_desa md', 'md.id_desa = r.id_desa')
-            ->join('master_organisasi mo', 'mo.id_organisasi = r.id_organisasi', 'left');
+        $this->db->select('r.*, mk.nama_kecamatan, md.nama_desa, mo.nama_organisasi');
+        $this->db->from($this->table . ' r');
+        $this->db->join('master_kecamatan mk', 'mk.id_kecamatan = r.id_kecamatan', 'left');
+        $this->db->join('master_desa md', 'md.id_desa = r.id_desa', 'left');
+        $this->db->join('master_organisasi mo', 'mo.id_organisasi = r.id_organisasi', 'left');
 
-        if ($id_kecamatan) {
-            $this->db->where('r.id_kecamatan', $id_kecamatan);
+        if (!empty($filter['id_kecamatan'])) {
+            $this->db->where('r.id_kecamatan', $filter['id_kecamatan']);
         }
 
-        if ($id_desa && $id_desa != 'all') { //kalo ada tapi bukan 'all', baru ambil sesuai id, all untuk opsi semua desa di dropdown
-            $this->db->where('r.id_desa', $id_desa);
+        if (!empty($filter['id_desa'])) {
+            $this->db->where('r.id_desa', $filter['id_desa']);
         }
 
-        if ($id_organisasi) {
-            $this->db->where('r.id_organisasi', $id_organisasi);
+        if (!empty($filter['id_organisasi'])) {
+            $this->db->where('r.id_organisasi', $filter['id_organisasi']);
         }
 
-        return $this->db->get()->result();
+        return $this->db->get()->result_array();
     }
 
     public function insert($data)
@@ -54,13 +53,12 @@ class Relawan_model extends CI_Model
         return $this->db->delete($this->table, ['id' => $id]);
     }
 
-    public function get_master_lists() //maybe should just put this in controller? no used in index, edit, and create
+    public function get_master_lists()
     {
         return [
-            'kecamatan_list' => $this->db->get('master_kecamatan')->result(),
-            'desa_list'      => $this->db->get('master_desa')->result(),
-            'organisasi_list'      => $this->db->get('master_organisasi')->result(),
+            'kecamatan_list'  => $this->db->get('master_kecamatan')->result(),
+            'desa_list'       => $this->db->get('master_desa')->result(),
+            'organisasi_list' => $this->db->get('master_organisasi')->result(),
         ];
     }
-
 }

@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-  const preselectedDesaId = $('#filter_desa').data('selected');
+  // make sure preselectedDesaId is a string ('' if not set)
+  const preselectedDesaId = $('#filter_desa').data('selected') || '';
   filterDesaOptions(preselectedDesaId);
 
-  // Fungsi inisialisasi Select2
   function initSelect2(selector, placeholder) {
     $(selector).select2({
       placeholder: placeholder,
@@ -17,19 +17,16 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Inisialisasi semua dropdown
   initSelect2('#filter_kecamatan', 'Pilih Kecamatan');
   initSelect2('#filter_desa', 'Pilih Desa');
   initSelect2('#filter_organisasi', 'Pilih Organisasi');
 
-  // Fungsi untuk memfilter desa
-  function filterDesaOptions(preselectId = null) {
+  function filterDesaOptions(preselectId = '') {
     const selectedKecamatanId = $('#filter_kecamatan').val();
     const desaSelect = $('#filter_desa');
 
     desaSelect.empty();
 
-    // Pilih URL sesuai kondisi
     const url = selectedKecamatanId
       ? base_url + 'wilayah/get_desa_by_kecamatan/' + selectedKecamatanId
       : base_url + 'wilayah/get_all_desa';
@@ -37,14 +34,19 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch(url)
       .then(response => response.json())
       .then(data => {
-        desaSelect.append(new Option('-- Semua Desa --', 'all', false, preselectId === 'all'));
+        // Gunakan 'all' sebagai value supaya Select2 menampilkannya
+        const isSelectedAll = (preselectId === '' || preselectId === null || preselectId === 'all');
+        desaSelect.append(new Option('-- Semua Desa --', 'all', false, isSelectedAll));
+
         data.forEach(desa => {
-          const isSelected = desa.id_desa == preselectId;
-          // simpan id_kecamatan di attribute option
+          const isSelected = String(desa.id_desa) === String(preselectId);
           const option = new Option(desa.nama_desa, desa.id_desa, false, isSelected);
           $(option).attr('data-kecamatan', desa.id_kecamatan);
           desaSelect.append(option);
         });
+
+        // Jika preselectId sebenarnya kosong (''), kita tetap ingin Select2 menampilkan placeholder
+        // tapi supaya ketika user submit sebagai "semua", kita akan convert 'all' -> ''
         desaSelect.trigger('change.select2');
       })
       .catch(error => {
@@ -52,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   }
 
-  // Submit otomatis jika filter kecamatan berubah
+  // Kalau kecamatan berubah -> reload desa dan submit
   $('#filter_kecamatan').on('select2:select select2:clear', function () {
     filterDesaOptions();
     $('#filterForm').submit();
@@ -60,15 +62,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Jika desa berubah → set kecamatan otomatis + submit
   $('#filter_desa').on('select2:select select2:clear', function () {
-    const selectedOption = $(this).find(':selected');
-    const kecamatanId = selectedOption.data('kecamatan');
-    if (kecamatanId) {
-      $('#filter_kecamatan').val(kecamatanId).trigger('change.select2');
+    let val = $(this).val();
+
+    // Jika user memilih opsi "Semua Desa" (value 'all'), ubah ke '' sebelum submit
+    if (val === 'all') {
+      // set element value ke empty (sebagai representasi "semua")
+      $(this).val('').trigger('change.select2');
+      val = '';
+    } else if (val) {
+      // pilih desa spesifik -> set kecamatan sesuai data attribute
+      const selectedOption = $(this).find(':selected');
+      const kecamatanId = selectedOption.data('kecamatan');
+      if (kecamatanId) {
+        $('#filter_kecamatan').val(kecamatanId).trigger('change.select2');
+      }
     }
+
+    // Submit form (GET). Karena kita telah mengosongkan value kalau 'all', backend akan menerima kosong.
     $('#filterForm').submit();
   });
 
-  // Submit otomatis jika filter organisasi berubah
   $('#filter_organisasi').on('change', function () {
     const val = $(this).val();
     const url = new URL(window.location.href);
