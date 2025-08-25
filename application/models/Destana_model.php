@@ -153,4 +153,23 @@ class Destana_model extends CI_Model {
         ];
     }
 
+    public function get_stats_per_kecamatan()
+{
+    $sql = "
+        SELECT 
+            mk.id_kecamatan,
+            mk.nama_kecamatan AS kecamatan,
+            COUNT(md.id_desa) AS total,
+            COUNT(d.id_desa) AS sudah,
+            (COUNT(md.id_desa) - COUNT(d.id_desa)) AS belum
+        FROM master_desa md
+        LEFT JOIN destana d ON d.id_desa = md.id_desa
+        LEFT JOIN master_kecamatan mk ON mk.id_kecamatan = md.id_kecamatan
+        GROUP BY mk.id_kecamatan, mk.nama_kecamatan
+        ORDER BY mk.nama_kecamatan
+    ";
+    return $this->db->query($sql)->result_array();
+}
+
+
 }

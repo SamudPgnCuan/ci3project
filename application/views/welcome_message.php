@@ -40,6 +40,22 @@
       </div>
     </div>
 
+    <!-- Chart Donut -->
+    <div class="card mt-4">
+      <div class="card-header"><h3 class="card-title">Chart Total</h3></div>
+      <div class="card-body">
+        <canvas id="chartDoughnut"></canvas>
+      </div>
+    </div>
+
+    <!-- Chart Bar -->
+    <div class="card mt-4">
+      <div class="card-header"><h3 class="card-title">Stacked Bar Chart Per Kecamatan</h3></div>
+      <div class="card-body">
+        <canvas id="chartBar"></canvas>
+      </div>
+    </div>
+
   </div>
 </section>
 

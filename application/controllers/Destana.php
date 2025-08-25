@@ -136,4 +136,14 @@ class Destana extends CI_Controller
             ->set_output(json_encode($stats));
     }
 
+    public function stats_per_kecamatan()
+    {
+        $this->load->model('Destana_model');
+        $rows = $this->Destana_model->get_stats_per_kecamatan();
+
+        $this->output
+            ->set_content_type('application/json')
+            ->set_output(json_encode($rows));
+    }
+
 }
