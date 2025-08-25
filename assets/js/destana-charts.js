@@ -7,8 +7,8 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(res => res.json())
         .then(data => {
             const labels = data.map(d => d.kecamatan);
-            const sudah = data.map(d => d.sudah);
-            const belum = data.map(d => d.belum);
+            const sudah = data.map(d => Number(d.sudah) || 0);
+            const belum = data.map(d => Number(d.belum) || 0);
             const persen = data.map(d => ((d.sudah / (d.sudah + d.belum)) * 100).toFixed(1));
 
             // Stacked Bar Chart
