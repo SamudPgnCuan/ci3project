@@ -106,4 +106,90 @@ class Bencana_model extends CI_Model {
         return $this->db->get()->result();
     }
 
+
+    /**
+     * Ambil statistik per tahun (YEAR) dengan filter opsional
+     */
+    public function get_yearly_stats($startYear = 2010, $endYear = null, $filter = [])
+    {
+        if (!$endYear) $endYear = date('Y');
+
+        $this->db->select("YEAR(b.tanggal_bencana) AS tahun, COUNT(*) AS total", false);
+        $this->db->from($this->table . ' b');
+
+        // join supaya bisa filter kecamatan/desa
+        $this->db->join('destana d', 'd.id = b.id_destana', 'left');
+        $this->db->join('master_desa md', 'd.id_desa = md.id_desa', 'left');
+        $this->db->join('master_kecamatan mk', 'mk.id_kecamatan = d.id_kecamatan', 'left');
+
+        // apply filter yang sama seperti get_all
+        if (!empty($filter['id_kecamatan'])) {
+            $this->db->where('mk.id_kecamatan', $filter['id_kecamatan']);
+        }
+        if (!empty($filter['id_desa'])) {
+            $this->db->where('md.id_desa', $filter['id_desa']);
+        }
+        if (!empty($filter['id_ancaman'])) {
+            $this->db->where('b.id_ancaman', $filter['id_ancaman']);
+        }
+        // jika ada rentang tanggal, gunakan untuk batasi (opsional)
+        if (!empty($filter['tanggal_mulai'])) {
+            $this->db->where('b.tanggal_bencana >=', $filter['tanggal_mulai']);
+        }
+        if (!empty($filter['tanggal_selesai'])) {
+            $this->db->where('b.tanggal_bencana <=', $filter['tanggal_selesai'] . ' 23:59:59');
+        }
+
+        // batasi rentang tahun agar query lebih aman
+        $this->db->where('b.tanggal_bencana >=', $startYear . '-01-01');
+        $this->db->where('b.tanggal_bencana <=', $endYear . '-12-31');
+
+        $this->db->group_by('YEAR(b.tanggal_bencana)');
+        $this->db->order_by('tahun', 'ASC');
+
+        $q = $this->db->get();
+        return $q->result_array();
+    }
+
+    /**
+     * Ambil statistik per bulan untuk satu tahun (MONTH) dengan filter opsional
+     */
+    public function get_monthly_stats($year, $filter = [])
+    {
+        $year = (int) $year;
+
+        $this->db->select("MONTH(b.tanggal_bencana) AS bulan, COUNT(*) AS total", false);
+        $this->db->from($this->table . ' b');
+
+        // join supaya bisa filter kecamatan/desa
+        $this->db->join('destana d', 'd.id = b.id_destana', 'left');
+        $this->db->join('master_desa md', 'd.id_desa = md.id_desa', 'left');
+        $this->db->join('master_kecamatan mk', 'mk.id_kecamatan = d.id_kecamatan', 'left');
+
+        if (!empty($filter['id_kecamatan'])) {
+            $this->db->where('mk.id_kecamatan', $filter['id_kecamatan']);
+        }
+        if (!empty($filter['id_desa'])) {
+            $this->db->where('md.id_desa', $filter['id_desa']);
+        }
+        if (!empty($filter['id_ancaman'])) {
+            $this->db->where('b.id_ancaman', $filter['id_ancaman']);
+        }
+        if (!empty($filter['tanggal_mulai'])) {
+            $this->db->where('b.tanggal_bencana >=', $filter['tanggal_mulai']);
+        }
+        if (!empty($filter['tanggal_selesai'])) {
+            $this->db->where('b.tanggal_bencana <=', $filter['tanggal_selesai'] . ' 23:59:59');
+        }
+
+        $this->db->where('YEAR(b.tanggal_bencana)', $year);
+
+        $this->db->group_by('MONTH(b.tanggal_bencana)');
+        $this->db->order_by('bulan', 'ASC');
+
+        $q = $this->db->get();
+        return $q->result_array();
+    }
+
+
 }

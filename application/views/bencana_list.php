@@ -121,38 +121,9 @@
       </div>
     </div>
 
-    <!-- Chart Sementara -->
-    <div class="card mt-4">
-      <div class="card-header">
-        <h3 class="card-title">Grafik ngasal</h3>
-      </div>
-      <div class="card-body">
-        <canvas id="chartTren"></canvas>
-      </div>
-    </div>
-
   </div>
 </section>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
   const base_url = '<?= base_url() ?>';
-
-  // Contoh script chart sementara (dummy data)
-  document.addEventListener('DOMContentLoaded', function() {
-    const ctx = document.getElementById('chartTren').getContext('2d');
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr'],
-        datasets: [{
-          label: 'Jumlah Bencana',
-          data: [5, 3, 8, 2],
-          borderWidth: 2
-        }]
-      },
-      options: { responsive: true }
-    });
-  });
 </script>
