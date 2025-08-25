@@ -58,96 +58,43 @@ document.addEventListener('DOMContentLoaded', function() {
     // Donut Chart untuk Total Destana (new code)
     fetch(base_url + 'destana/stats')
         .then(res => res.json())
-        .then(data => {
-            const total = data.total;
-            const sudah = data.sudah;
-            const belum = data.belum;
-            const persentaseSudah = ((sudah / total) * 100).toFixed(1);
-            const persentaseBelum = ((belum / total) * 100).toFixed(1);
-
+        .then(d => {
+          // pastikan angka
+          const sudah = Number(d.sudah) || 0;
+          const belum = Number(d.belum) || 0;
+          const dataset = [sudah, belum];
             // Doughnut Chart
             new Chart(ctxDoughnut, {
                 type: 'doughnut',
                 data: {
                     labels: ['Sudah Destana', 'Belum Destana'],
                     datasets: [{
-                        data: [sudah, belum],
-                        backgroundColor: ['#36A2EB', '#FF6384'],
-                        borderColor: ['#36A2EB', '#FF6384'],
-                        borderWidth: 2,
-                        hoverBackgroundColor: ['#4BC0C0', '#FF9F40'],
-                        hoverBorderColor: ['#4BC0C0', '#FF9F40']
+                    data: dataset,
+                    backgroundColor: ['#36A2EB', '#FF6384'],
+                    borderWidth: 1
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                padding: 20,
-                                usePointStyle: true,
-                                font: {
-                                    size: 12
-                                }
-                            }
+                    legend: { position: 'bottom' },
+                    datalabels: {
+                        formatter: (value, context) => {
+                        const values = context.chart.data.datasets[0].data;
+                        const total = values.reduce((a, b) => a + b, 0);
+                        const pct = total ? ((value / total) * 100).toFixed(1) : 0;
+                        return `${value} (${pct}%)`; // tampil jumlah + persen
                         },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.label || '';
-                                    const value = context.raw;
-                                    const percentage = ((value / total) * 100).toFixed(1);
-                                    return `${label}: ${value} desa (${percentage}%)`;
-                                }
-                            }
+                        color: '#fff',
+                        font: {
+                        weight: 'bold',
+                        size: 14
                         }
-                    },
-                    cutout: '60%', // Membuat hole di tengah donut
-                    elements: {
-                        arc: {
-                            borderWidth: 2
-                        }
+                    }
                     }
                 },
-                plugins: [{
-                    // Plugin untuk menampilkan text di tengah donut
-                    id: 'centerText',
-                    beforeDraw: function(chart) {
-                        if (chart.config.options.elements.center) {
-                            const ctx = chart.ctx;
-                            const centerConfig = chart.config.options.elements.center;
-                            const fontStyle = centerConfig.fontStyle || 'Arial';
-                            const txt = centerConfig.text;
-                            const color = centerConfig.color || '#000';
-                            const maxFontSize = centerConfig.maxFontSize || 75;
-                            const sidePadding = centerConfig.sidePadding || 20;
-                            const sidePaddingCalculated = (sidePadding / 100) * (chart.innerRadius * 2);
-
-                            ctx.font = "30px " + fontStyle;
-                            const stringWidth = ctx.measureText(txt).width;
-                            const elementWidth = (chart.innerRadius * 2) - sidePaddingCalculated;
-
-                            const widthRatio = elementWidth / stringWidth;
-                            const newFontSize = Math.floor(30 * widthRatio);
-                            const finalFontSize = newFontSize > maxFontSize ? maxFontSize : newFontSize;
-
-                            ctx.textAlign = 'center';
-                            ctx.textBaseline = 'middle';
-                            const centerX = ((chart.chartArea.left + chart.chartArea.right) / 2);
-                            const centerY = ((chart.chartArea.top + chart.chartArea.bottom) / 2);
-                            ctx.font = finalFontSize + "px " + fontStyle;
-                            ctx.fillStyle = color;
-
-                            if (txt) {
-                                ctx.fillText(txt, centerX, centerY - 10);
-                                ctx.font = (finalFontSize * 0.6) + "px " + fontStyle;
-                                ctx.fillText('Total Desa', centerX, centerY + 15);
-                            }
-                        }
-                    }
-                }]
+                plugins: [ChartDataLabels] // aktifkan plugin
             });
 
             // Menambahkan text di tengah donut

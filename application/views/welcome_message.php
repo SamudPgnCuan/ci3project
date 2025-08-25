@@ -28,21 +28,11 @@
       </div>
     </div>
 
-    <!-- chart Persentase Desa Destana -->
-    <div class="card">
+    <!-- Chart Donut -->
+    <div class="card mt-4">
       <div class="card-header">
         <h5>Persentase Desa Destana</h5>
       </div>
-      <div class="card-body">
-        <div style="height:350px;">
-          <canvas id="chartDestana"></canvas>
-        </div>
-      </div>
-    </div>
-
-    <!-- Chart Donut -->
-    <div class="card mt-4">
-      <div class="card-header"><h3 class="card-title">Chart Total</h3></div>
       <div class="card-body">
         <canvas id="chartDoughnut"></canvas>
       </div>
@@ -50,7 +40,7 @@
 
     <!-- Chart Bar -->
     <div class="card mt-4">
-      <div class="card-header"><h3 class="card-title">Stacked Bar Chart Per Kecamatan</h3></div>
+      <div class="card-header"><h3 class="card-title">Persentase per Kecamatan</h3></div>
       <div class="card-body">
         <canvas id="chartBar"></canvas>
       </div>
