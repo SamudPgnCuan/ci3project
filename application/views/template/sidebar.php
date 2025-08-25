@@ -14,7 +14,7 @@
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
 
         <li class="nav-item">
-          <a href="<?= site_url() ?>" class="nav-link <?= $segment1 == '' ? 'active' : '' ?>">
+          <a href="<?= site_url('welcome') ?>" class="nav-link <?= $segment1 == '' ? 'active' : '' ?>">
             <i class="nav-icon fas fa-home"></i>
             <p>Beranda</p>
           </a>

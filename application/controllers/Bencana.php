@@ -128,4 +128,66 @@ class Bencana extends CI_Controller
         $result = $this->Bencana_model->get_by_destana($id_destana);
         echo json_encode($result);
     }
+
+    public function stats_yearly()
+    {
+        header('Content-Type: application/json');
+
+        $start = (int) $this->input->get('start_year') ?: 2010;
+        $end   = (int) $this->input->get('end_year') ?: (int) date('Y');
+
+        // ambil filter sama seperti index
+        $filter = [
+            'id_kecamatan'   => $this->input->get('kecamatan'),
+            'id_desa'        => $this->input->get('desa'),
+            'id_ancaman'     => $this->input->get('id_ancaman'),
+            'tanggal_mulai'  => $this->input->get('tanggal_mulai'),
+            'tanggal_selesai'=> $this->input->get('tanggal_selesai'),
+        ];
+
+        $rows = $this->Bencana_model->get_yearly_stats($start, $end, $filter);
+
+        // normalisasi label tahun dari start..end
+        $map = [];
+        foreach ($rows as $r) $map[(int)$r['tahun']] = (int)$r['total'];
+
+        $labels = [];
+        $data = [];
+        for ($y = $start; $y <= $end; $y++) {
+            $labels[] = (string)$y;
+            $data[] = isset($map[$y]) ? $map[$y] : 0;
+        }
+
+        echo json_encode(['labels' => $labels, 'data' => $data, 'start' => $start, 'end' => $end]);
+    }
+
+    public function stats_monthly()
+        {
+            header('Content-Type: application/json');
+
+            $year = (int) $this->input->get('year') ?: (int) date('Y');
+
+            $filter = [
+                'id_kecamatan'   => $this->input->get('kecamatan'),
+                'id_desa'        => $this->input->get('desa'),
+                'id_ancaman'     => $this->input->get('id_ancaman'),
+                // note: monthly stats use YEAR filter, tanggal range optional but ignored here
+                'tanggal_mulai'  => $this->input->get('tanggal_mulai'),
+                'tanggal_selesai'=> $this->input->get('tanggal_selesai'),
+            ];
+
+            $rows = $this->Bencana_model->get_monthly_stats($year, $filter);
+
+            $map = [];
+            foreach ($rows as $r) $map[(int)$r['bulan']] = (int)$r['total'];
+
+            $labels = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+            $data = [];
+            for ($m = 1; $m <= 12; $m++) {
+                $data[] = isset($map[$m]) ? $map[$m] : 0;
+            }
+
+            echo json_encode(['labels' => $labels, 'data' => $data, 'year' => $year]);
+        }
+
 }
