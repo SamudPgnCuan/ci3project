@@ -28,10 +28,24 @@
       </div>
     </div>
 
+    <!-- chart Persentase Desa Destana -->
+    <div class="card">
+      <div class="card-header">
+        <h5>Persentase Desa Destana</h5>
+      </div>
+      <div class="card-body">
+        <div style="height:350px;">
+          <canvas id="chartDestana"></canvas>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
 
 <!-- it's just this one script surely it's alright like this right? -->
 <script>const base_url = '<?= base_url() ?>';</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 <script src="<?= base_url('assets/js/bencana-charts.js') ?>"></script>
+<script src="<?= base_url('assets/js/destana-charts.js') ?>"></script>

@@ -128,4 +128,12 @@ class Destana extends CI_Controller
         redirect('destana');
     }
 
+    public function stats()
+    {
+        $stats = $this->Destana_model->get_destana_stats();
+        $this->output
+            ->set_content_type('application/json')
+            ->set_output(json_encode($stats));
+    }
+
 }

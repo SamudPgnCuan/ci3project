@@ -137,8 +137,20 @@ class Destana_model extends CI_Model {
         return $desa_baru;
     }
 
+    public function get_destana_stats()
+    {
+        // total desa
+        $total_desa = $this->db->count_all('master_desa');
 
+        // desa yang sudah destana
+        $this->db->select('COUNT(DISTINCT id_desa) as jumlah');
+        $count = $this->db->get($this->table)->row()->jumlah;
 
-
+        return [
+            'total' => $total_desa,
+            'sudah' => $count,
+            'belum' => $total_desa - $count
+        ];
+    }
 
 }
