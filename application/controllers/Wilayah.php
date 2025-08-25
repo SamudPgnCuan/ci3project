@@ -36,10 +36,19 @@ class Wilayah extends CI_Controller
         echo json_encode($desa);
     }
 
-     public function get_destana_by_kecamatan($id_kecamatan = null)
+    public function get_destana_by_kecamatan($id_kecamatan = null)
     {
         $this->load->model('Bencana_model');
         $result = $this->Bencana_model->get_destana_by_kecamatan($id_kecamatan);
         echo json_encode($result);
+    }
+
+    public function get_all_desa()
+    {
+        header('Content-Type: application/json');
+
+        $desa = $this->db->get('master_desa')->result();
+
+        echo json_encode($desa);
     }
 }

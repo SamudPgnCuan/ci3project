@@ -121,4 +121,11 @@ class Bencana extends CI_Controller
         $this->Bencana_model->delete(['id' => $id]);
         redirect('bencana');
     }
+
+    public function get_by_destana($id_destana)
+    {
+        header('Content-Type: application/json');
+        $result = $this->Bencana_model->get_by_destana($id_destana);
+        echo json_encode($result);
+    }
 }
